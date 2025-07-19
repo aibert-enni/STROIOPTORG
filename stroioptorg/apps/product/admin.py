@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.product.models import Category, Product, Attribute, ProductAttribute, Cart, CartProduct, ProductImage, \
-    AttributeValue, FilterAttribute
+    AttributeValue, FilterAttribute, ShopAddress
 
 admin.site.register(Attribute)
 admin.site.register(ProductAttribute)
@@ -9,6 +9,7 @@ admin.site.register(Cart)
 admin.site.register(CartProduct)
 admin.site.register(ProductImage)
 admin.site.register(AttributeValue)
+admin.site.register(ShopAddress)
 
 class FilterAttributeInline(admin.TabularInline):  # 👈 Можно использовать StackedInline
     model = FilterAttribute

@@ -8,11 +8,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from silk.profiling.profiler import silk_profile
 
-from product.models import Category, Product
-from product.pagination import ProductListPagination
-from product.serializers import ProductSerializer, ProductListQuerySerializer
-from product.services import ProductByCategoryListService
-from product.utils import get_nested_categories, get_filter
+from apps.product.models import Category, Product
+from apps.product.pagination import ProductListPagination
+from apps.product.serializers import ProductSerializer, ProductListQuerySerializer
+from apps.product.services import ProductByCategoryListService
+from apps.product.utils import get_nested_categories, get_filter
 from utils.cache import safe_cache_get, safe_cache_set
 
 

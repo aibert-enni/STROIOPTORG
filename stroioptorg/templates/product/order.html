@@ -1,11 +1,444 @@
 {% extends 'common/base.html' %}
 
+{% load static %}
+
+{% block css %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMhoTbUlf-gBRC2UGGiyfVb4o00TMcmtM&libraries=places&language=rus"></script>
+{% endblock %}
 {% block content %}
-    <h1 class="h1">Оформление заказа</h1>
-    <div>
-    
-    </div>
+    <h1 class="h1 mb-9">Оформление заказа</h1>
+    <form class="flex gap-5" x-data="makeOrderWithMap()" @submit.prevent="submit">
+        <div class="flex flex-col border rounded-lg gap-6 py-10 px-10" x-init="loadAddresses()">
+            <p class="text-xl font-medium">Доставка</p>
+            <div class="flex justify-between gap-4">
+                <select
+                        class="w-full border rounded-lg py-6 px-5"
+                        id="region"
+                        x-model="selectedRegion"
+                >
+                    <option value="">Выберите регион</option>
+                    <template x-for="region in regions" :key="region.id">
+                        <option :value="region.id" x-text="region.name"></option>
+                    </template>
+                </select>
+
+                <!-- Селект городов -->
+                <select
+                        class="w-full border rounded-lg py-6 px-5"
+                        id="city"
+                        x-model="selectedCity"
+                        :disabled="!filteredCities.length"
+                >
+                    <option value="">Выберите город</option>
+                    <template x-for="city in filteredCities" :key="city.id">
+                        <option :value="city.id" x-text="city.name"></option>
+                    </template>
+                </select>
+            </div>
+            <div class="flex justify-between gap-4" x-effect="updateDeliveryCost">
+                <div class="flex-1 border rounded-lg p-5 flex items-start gap-5">
+                    <input class="w-[23px] h-[23px]" type="radio" name="delivery-method" x-model="deliveryMethod"
+                           value="pickup">
+                    <div class="flex flex-col">
+                        <p class="mb-2">Самовывоз</p>
+                        <p class="text-[#62676F] text-sm mb-3">К вашему приезду заказ будет скомплектован и готов к
+                            выдаче.</p>
+                        <select
+                                class="w-full border rounded-lg py-6 px-5"
+                                id="pickup"
+                                x-model="selectedShopAddress"
+                                :disabled="!filteredAddresses.length"
+                        >
+                            <option value="">Выберите магазин</option>
+                            <template x-for="address in filteredAddresses" :key="address.id">
+                                <option :value="address.id" x-text="address.street"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-1 border rounded-lg p-5 flex items-start gap-5">
+                    <input class="w-[23px] h-[23px]" type="radio" name="delivery-method" x-model="deliveryMethod"
+                           value="courier">
+                    <div class="flex flex-col">
+                        <p class="mb-2">Доставка магазина</p>
+                        <p class="text-[#62676F] text-sm mb-3">Если же вам нужна будет доставка к определенному времени,
+                            то укажите это в поле для комментариев к заказу.</p>
+                        <div class="p-4">
+                            <p><strong>Выбранный адрес:</strong>
+                                <template x-if="mapSelectedAddress"><span id="address"
+                                                                          x-text="mapSelectedAddress.formatted"></span>
+                                </template>
+                            </p>
+                            <input type="text" class="w-full border rounded-lg py-6 px-5" id="searchInput"
+                                   x-model="searchQuery"
+                                   placeholder="Ведите адрес доставки..." @input="onSearchInput()">
+                            <div id="map" style="width: 100%; height: 400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4">
+                <p class="text-xl">Оплата</p>
+                <div class="flex gap-4">
+                    <input class="w-[23px] h-[23px]" id="card-method" value="card" name="payment-method"
+                           x-model="paymentMethod" type="radio">
+                    <label for="card-method">Картой на сайте</label>
+                </div>
+                <div class="flex gap-4">
+                    <input class="w-[23px] h-[23px]" id="in-store" value="in_store" name="payment-method"
+                           x-model="paymentMethod" type="radio">
+                    <label for="in-store">Оплата в кассе</label>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="flex gap-6">
+                    <div class="flex-1 flex flex-col gap-2">
+                        <label for="firstname">Ваше имя <span class="text-red-600">*</span>:</label>
+                        <input x-model="firstname" class="w-full border rounded-lg py-6 px-5" id="firstname" type="text"
+                               placeholder="Как вас зовут" required/>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-2">
+                        <label for="lastname">Фамилия <span class="text-red-600">*</span>:</label>
+                        <input x-model="lastname" class="w-full border rounded-lg py-6 px-5" id="lastname" type="text"
+                               placeholder="Введите ваше фамилию" required/>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                    <label for="company">Название компании:</label>
+                    <input x-model="company" class="w-full border rounded-lg py-6 px-5" id="company" type="text"
+                           placeholder="Введите название вашей компании"/>
+                </div>
+                <div class="flex gap-6">
+                    <div class="flex-1 flex flex-col gap-2">
+                        <label for="email">Email <span class="text-red-600">*</span>:</label>
+                        <input x-model="mail" class="w-full border rounded-lg py-6 px-5" id="email" type="email"
+                               placeholder="Введите ваш email адрес" required/>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-2">
+                        <label for="phone_number">Номер телефона <span class="text-red-600">*</span>:</label>
+                        <input id="phone_number" type="tel" autocomplete="phone_number" x-model="phone_number"
+                               placeholder="+7 (___) ___-__-__"
+                               class="w-full border rounded-lg py-6 px-5" required>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-2">
+                    <label for="comments">Комментарии к заказу:</label>
+                    <textarea id="comments" x-model="comments"
+                              placeholder="Текстовое поле"
+                              class="w-full border rounded-lg py-6 px-5"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6 rounded-lg shadow-md py-10 px-10">
+            <p class="font-medium text-2xl">Ваш заказ</p>
+            <div>
+                <template x-for="product in products" :key="product.id">
+                    <div class="flex " :id="product.id">
+                        <div class="flex gap-4">
+                            <img class="h-[90px] w-[90px]" :src="product.product.cover_url">
+                            <div class="w-[277px]">
+                                <p class="text-left font-medium w-full" x-text="product.product.name"></p>
+                                <p class="text-left text-sm text-[#A8ADB2]">Артикул: <span
+                                        x-text="product.product.sku"></span></p>
+                            </div>
+                        </div>
+                        <p class="text-[#003B73] text-xl whitespace-nowrap"><span
+                                    x-text="product.subtotal"></span> ₽</p>
+                    </div>
+                </template>
+            </div>
+            <div class="flex items-center gap-4">
+                <p class="font-medium">Сумма</p>
+                <div class="w-full h-[1px] border-b-2 border-dotted"></div>
+                <p class="text-[#003B73] text-xl whitespace-nowrap"><span x-text="products_total"></span> ₽</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <p class="font-medium">Доставка</p>
+                <div class="w-full h-[1px] border-b-2 border-dotted"></div>
+                <p class="text-[#003B73] text-xl whitespace-nowrap"><span x-text="deliveryCost"></span> ₽</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <p class="font-medium">Итого</p>
+                <div class="w-full h-[1px] border-b-2 border-dotted"></div>
+                <p class="text-[#003B73] text-xl whitespace-nowrap"><span x-text="total"></span> ₽</p>
+            </div>
+            <div class="flex gap-4 justify-between items-start">
+                <input class="w-[26px] h-[26px]" id="privacy-policy" type="checkbox" required>
+                <p class="text-sm text-[#696D70]">Согласен с обработкой персональных данных в соответствии с политикой конфиденциальности</p>
+            </div>
+            <button type="submit"
+                    class="bg-[#186FD4] w-full h-[61px] rounded-lg uppercase font-bold text-[13px] text-white px-4 py-2 mt-4">
+                Оформить заказ
+            </button>
+        </div>
+    </form>
 {% endblock %}
 
 {% block script %}
+    <script src="https://unpkg.com/inputmask@5.0.8/dist/inputmask.min.js"></script>
+    <script>
+        Inputmask({mask: "+7 (999) 999-99-99"}).mask("#phone_number");
+    </script>
+    <script>
+        function makeOrderWithMap() {
+            return {
+                // === Данные заказа ===
+                regions: [],
+                cities: [],
+                selectedRegion: '',
+                selectedCity: '',
+                selectedShopAddress: 0,
+                deliveryMethod: '',
+                deliveryCost: 0,
+                paymentMethod: '',
+                firstname: '',
+                lastname: '',
+                company: '',
+                mail: '',
+                phone_number: '',
+                comments: '',
+
+                // Данные корзины
+                products: null,
+                products_total: 0,
+                get total() {
+                    return this.products_total + this.deliveryCost;
+                },
+
+                // === Данные карты ===
+                map: null,
+                geocoder: null,
+                currentMarker: null,
+                searchBox: null,
+                mapSelectedCity: 'Almaty, Kazakhstan',
+                searchQuery: '',
+                mapSelectedAddress: null,
+                mapStatus: {
+                    message: 'Initializing map...',
+                    type: 'info'
+                },
+
+                cityCoordinates: {
+                    'Almaty, Kazakhstan': {lat: 43.2220, lng: 76.8512},
+                    'Nur-Sultan, Kazakhstan': {lat: 51.1605, lng: 71.4704},
+                    // ... другие города
+                },
+
+                // === Инициализация ===
+                async init() {
+                    await this.loadCart();
+                    await this.loadAddresses();
+                    this.initMap();
+                },
+
+                // === Фильтрация ===
+                get filteredCities() {
+                    if (!this.selectedRegion) return [];
+                    const cities = this.regions.find(r => r.id === Number(this.selectedRegion)).cities;
+                    this.cities = cities;
+                    return cities;
+                },
+                get filteredAddresses() {
+                    if (!this.selectedCity) return [];
+                    return this.cities.find(r => r.id === Number(this.selectedCity)).shops_addresses;
+                },
+
+                // === Загрузка адресов ===
+                async loadAddresses() {
+                    const response = await api('/api/v1/shop-address', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const data = await response.json();
+                    this.regions = data;
+                },
+
+                // Загрузка корзины
+
+                async loadCart() {
+                    await api('/api/v1/cart/', {
+                        method: 'GET',
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.products = data.products;
+                            this.products_total = data.total_amount;
+                            console.log(data);
+                        })
+                },
+
+                // === Обновление стоимости доставки ===
+                async updateDeliveryCost() {
+                    if (this.deliveryMethod !== "courier") {
+                        this.deliveryCost = 0;
+                        return;
+                    }
+                    const address = this.mapSelectedAddress?.formatted || '';
+                    if (!address) {
+                        this.deliveryCost = 0;
+                        return;
+                    }
+                    const response = await api('/api/v1/order/calculate-delivery/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            address: address
+                        }),
+                        credentials: 'include'
+                    });
+                    const data = await response.json();
+                    this.deliveryCost = data.delivery_cost;
+                },
+
+                // === Отправка заказа ===
+                async submit() {
+                    if (!this.paymentMethod || !this.firstname || !this.lastname || !this.mail || !this.phone_number || !this.deliveryMethod) {
+                        this.setError("Заполните нужные поля!");
+                        return;
+                    }
+                    const address = this.mapSelectedAddress?.formatted || '';
+                    if (this.deliveryMethod === 'courier' && !address) {
+                        this.setError("Заполните адрес доставки!");
+                        return;
+                    }
+                    if (this.deliveryMethod === 'pickup' && !this.selectedShopAddress) {
+                        this.setError("Выберите адрес магазина!");
+                        return;
+                    }
+                    this.phone_number = this.phone_number.replace(/[\s()-]/g, '');
+
+                    let data = {
+                        delivery_method: this.deliveryMethod,
+                        delivery_cost: this.deliveryCost,
+                        address,
+                        shop_address: this.selectedShopAddress,
+                        payment_method: this.paymentMethod,
+                        firstname: this.firstname,
+                        lastname: this.lastname,
+                        company: this.company,
+                        mail: this.mail,
+                        phone_number: this.phone_number,
+                        comments: this.comments,
+                    };
+
+                    console.log(data)
+
+                    try {
+                        const response = await api('/api/v1/order/create/', {
+                            'method': 'POST',
+                            'headers': {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data),
+                            credentials: 'include'
+                        })
+
+                        if (!response.ok) {
+                            const errorText = await response.text(); // optional: parse response body
+                            throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+                        }
+
+                        data = await response.json();
+
+                        console.log(data);
+
+                        if (data.checkout_url) {
+                            window.location.href = data.checkout_url
+                        }
+
+
+                    } catch (error) {
+                        console.log(error.message);
+                    }
+                },
+
+                setError(error) {
+                    console.log(error);
+                },
+
+                // === Инициализация карты ===
+                initMap() {
+                    const coords = this.cityCoordinates[this.mapSelectedCity];
+                    this.map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 11,
+                        center: coords
+                    });
+                    this.geocoder = new google.maps.Geocoder();
+                    this.setupSearchBox();
+                    this.map.addListener('click', (event) => this.handleMapClick(event.latLng));
+                    this.mapStatus = {message: 'Map ready', type: 'success'};
+                },
+
+                setupSearchBox() {
+                    const input = document.getElementById('searchInput');
+                    this.searchBox = new google.maps.places.SearchBox(input);
+                    this.map.addListener('bounds_changed', () => {
+                        this.searchBox.setBounds(this.map.getBounds());
+                    });
+                    this.searchBox.addListener('places_changed', () => {
+                        this.handlePlaceSearch();
+                    });
+                },
+
+                handlePlaceSearch() {
+                    const places = this.searchBox.getPlaces();
+                    if (!places.length) return;
+                    const place = places[0];
+                    if (!place.geometry) return;
+                    this.map.setCenter(place.geometry.location);
+                    this.map.setZoom(15);
+                    this.handleMapClick(place.geometry.location);
+                },
+
+                changeMapCity() {
+                    if (this.mapSelectedCity && this.cityCoordinates[this.mapSelectedCity]) {
+                        const coords = this.cityCoordinates[this.mapSelectedCity];
+                        this.map.setCenter(coords);
+                        this.map.setZoom(12);
+                        this.clearSelectedAddress();
+                    }
+                },
+
+                handleMapClick(latLng) {
+                    if (this.currentMarker) this.currentMarker.setMap(null);
+                    this.currentMarker = new google.maps.Marker({
+                        position: latLng,
+                        map: this.map
+                    });
+
+                    this.geocoder.geocode({location: latLng}, (results, status) => {
+                        if (status === 'OK' && results[0]) {
+                            const address = results[0];
+                            this.mapSelectedAddress = {
+                                formatted: address.formatted_address,
+                                coordinates: {
+                                    lat: latLng.lat(),
+                                    lng: latLng.lng()
+                                }
+                            };
+                            this.updateDeliveryCost();
+                        }
+                    });
+                },
+
+                clearSelectedAddress() {
+                    this.mapSelectedAddress = null;
+                    if (this.currentMarker) this.currentMarker.setMap(null);
+                    this.currentMarker = null;
+                }
+            }
+        }
+
+        // Initialize map when page loads
+        window.onload = function () {
+            // Check if Google Maps API is loaded
+            if (typeof google === 'undefined') {
+                console.error('Google Maps API not loaded. Please add your API key.');
+                return;
+            }
+        };
+    </script>
 {% endblock %}

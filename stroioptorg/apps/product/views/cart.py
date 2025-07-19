@@ -6,10 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from product.models import CartProduct, Cart
-from product.serializers import CartSerializer, CartProductSerializer, UpdateCartProductSerializer, \
+from apps.product.models import CartProduct, Cart
+from apps.product.serializers import CartSerializer, CartProductSerializer, UpdateCartProductSerializer, \
     AddToCartSerializer
-from product.services import CartProductService, CartService
+from apps.product.services import CartProductService, CartService
 
 
 class CartView(ListView):

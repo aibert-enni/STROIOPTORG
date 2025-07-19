@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from users.models import User
+from apps.users.models import User
 
 
 class CustomGoogleOAuth2Client(OAuth2Client):

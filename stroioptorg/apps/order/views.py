@@ -8,18 +8,21 @@ from rest_framework.views import APIView
 
 from apps.order.pagination import OrderPagination
 from apps.order.serializers import CreateOrderSerializer, OrderRefreshPaymentSerializer, \
-    OrderCalculateDeliveryCostSerializer, OrderDeclineSerializer, OrderSerializer, OrderConfirmSerializer
+    OrderCalculateDeliveryCostSerializer, OrderDeclineSerializer, OrderResponseSerializer, OrderSerializer, OrderConfirmSerializer
 from apps.order.services import OrderService
 from utils.permission import IsManager
 
 class OrderView(TemplateView):
     template_name = "product/order.html"
 
+class OrderSuccessView(TemplateView):
+    template_name = "product/order_success.html"
+
 class OrderGetAPIView(APIView):
 
     def get(self, request, pk):
         order = OrderService.get_order(request, pk)
-        serializer = OrderSerializer(order)
+        serializer = OrderResponseSerializer(order)
         return Response({'order': serializer.data})
 
 class OrderListAPIView(ListAPIView):
@@ -31,6 +34,7 @@ class OrderListAPIView(ListAPIView):
         return OrderService.get_orders_by_user(self.request)
 
 class OrderCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         request=CreateOrderSerializer,

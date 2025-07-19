@@ -5,8 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from apps.product.models import Cart
-from product.models import Category
-from product.utils import get_nested_categories
+from apps.product.models import Category
+from apps.product.utils import get_nested_categories
 from utils.cache import safe_cache_set
 
 logger = logging.getLogger(__name__)

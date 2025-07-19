@@ -1,0 +1,21 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1 class="h1">Личный кабинет</h1>
+    <div class="flex" x-data="accountController()">
+        <div>
+            <p>Здравствуйте, </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function accountController() {
+            return {
+                
+            }
+        }
+    </script>
+{% endblock %}

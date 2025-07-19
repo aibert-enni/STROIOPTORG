@@ -1,12 +1,11 @@
 from django.views.generic import DetailView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
 
-from product.models import Product, ProductAttribute
-from product.pagination import ProductListPagination
-from product.serializers import ProductSerializer, CategorySerializer, SearchQuerySerializer
-from product.services import ProductService
+from apps.product.models import Product, ProductAttribute
+from apps.product.pagination import ProductListPagination
+from apps.product.serializers import ProductSerializer, CategorySerializer, SearchQuerySerializer
+from apps.product.services import ProductService
 
 
 class ProductDetailView(DetailView):

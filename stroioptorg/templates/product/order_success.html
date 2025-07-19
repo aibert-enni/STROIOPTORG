@@ -1,0 +1,134 @@
+{% extends 'common/base.html' %}
+
+
+{% block content %}
+    <h1 class="h1 mb-12">Спасибо за заказ</h1>
+    <div class="flex flex-col justify-center items-center mb-24" x-data="getOrder()">
+        <div class="w-[80%] flex flex-col gap-[37px]">
+            <div class="w-full py-4 bg-[#F8F9FB]">
+                <p class="text-[#186FD4] text-center font-medium text-xl">Спасибо! Ваш заказ успешно оформлен.</p>
+            </div>
+            <div class="flex justify-between items-center border rounded-lg p-10">
+                <div class="border-dashed w-full flex justify-center border-r">
+                    <div class="w-fit">
+                        <p class="text-sm text-[#4C4C4C]">Номер заказа:</p>
+                        <p class="text-[#003B73] text-lg">#<span x-text="order.id"></span></p>
+                    </div>
+                </div>
+                <div class="border-dashed w-full flex justify-center border-r">
+                    <div class="w-fit">
+                        <p class="text-sm text-[#4C4C4C]">Дата:</p>
+                        <p class="text-[#003B73] text-lg" x-text="order.created_at"></p>
+                    </div>
+                </div>
+                <div class="border-dashed w-full flex justify-center border-r">
+                    <div class="w-fit">
+                        <p class="text-sm text-[#4C4C4C]">Итого:</p>
+                        <p class="text-[#003B73] text-lg" x-text="order.total_price + ' ₽'"></p>
+                    </div>
+                </div>
+                <div class="border-dashed w-full flex justify-center">
+                    <div class="w-fit">
+                        <p class="text-sm text-[#4C4C4C]">Способ оплаты:</p>
+                        <p class="text-[#003B73] text-lg" x-text="order.payment_method"></p>
+                    </div>
+                </div>
+            </div>
+            <p class="font-medium text-2xl">Детали заказа:</p>
+            <div class="border rounded-lg">
+                <div class="flex justify-between p-5 border-b">
+                    <p class="font-bold text-xl">Товар</p>
+                    <p class="font-bold text-xl">Итого</p>
+                </div>
+                <template x-for="item in order.items" :key="item.id">
+                    <div class="flex justify-between p-4 border-b">
+                        <div class="flex gap-4">
+                            <p class="font-medium" x-text="item.product_name"></p>
+                            <p class="text-sm text-[#7A7A7E]" x-text="'x' + item.quantity"></p>
+                        </div>
+                        <p class="text-[#003B73] text-xl whitespace-nowrap" x-text="item.subtotal + ' ₽'"></p>
+                    </div>
+                </template>
+                <div class="flex justify-between p-5 border-b">
+                    <p>Сумма:</p>
+                    <p class="text-[#003B73] text-xl whitespace-nowrap" x-text="order.total_price - order.delivery_cost + ' ₽'"></p>
+                </div>
+                <div class="flex justify-between p-5 border-b">
+                    <p>Доставка:</p>
+                    <p class="text-[#003B73] text-xl whitespace-nowrap" x-text="order.delivery_cost + ' ₽'"></p>
+                </div>
+                <div class="flex justify-between p-5 border-b">
+                    <p>Способ доставки:</p>
+                    <p x-text="order.delivery_method"></p>
+                </div>
+                 <div class="flex justify-between p-5 border-b">
+                    <p>Способ оплаты:</p>
+                    <p x-text="order.payment_method"></p>
+                </div>
+                <div class="flex justify-between p-5 border-b">
+                    <p class="text-2xl">Итого:</p>
+                    <p class="text-[#003B73] text-2xl whitespace-nowrap" x-text="order.total_price + ' ₽'"></p>
+                </div>
+            </div>
+            <div class="border rounded-lg px-7 pt-5 pb-7">
+                <p class="font-medium text-xl mb-8" x-text="order.lastname + ' ' + order.firstname"></p>
+                <div class="flex justify-between">
+                    <p class="font-medium" x-text="order.address"></p>
+                    <div>
+                        <p class="text-[#87878D] text-sm">Телефон:</p>
+                        <p class="font-medium" x-text="order.phone_number"></p>
+                    </div>
+                    <div>
+                        <p class="text-[#87878D] text-sm">Email:</p>
+                        <p class="font-medium" x-text="order.mail"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function getOrder() {
+            return {
+                order: {
+                    id: '',
+                    created_at: '',
+                    total_price: '',
+                    payment_method: '',
+                    delivery_cost: '',
+                    delivery_method: '',
+                    items: [],
+                    
+                    firstname: '',
+                    lastname: '',
+                },
+
+                async init() {
+                    await this.loadOrder();
+                },
+
+                async loadOrder() {
+                    const url_paths = window.location.href.split('/');
+                    const order_id = url_paths[url_paths.length - 2];
+
+                    try {
+                        const response = await api('/api/v1/order/' + order_id + '/', {
+                            method: 'GET',
+                            credentials: 'include',
+                        })
+
+                        const data = await response.json();
+
+                        this.order = data.order;
+
+                        console.log(data);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}

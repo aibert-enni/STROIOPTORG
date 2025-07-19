@@ -1,1 +1,1 @@
-from main.views.home_view import HomeView
+from apps.main.views.home_view import HomeView

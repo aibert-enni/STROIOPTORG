@@ -1,7 +1,7 @@
 from django.urls import path
 
 from apps.product.views import CartAPIView, CartAddProductAPIView, CartUpdateProductAPIView, CartRemoveProductAPIView, \
-    ProductByCategoryListAPIView, CategoryTreeAPIView
+    ProductByCategoryListAPIView, CategoryTreeAPIView, ShopAddressesAPIView
 from apps.product.views.product import ProductSearchListAPIView
 
 app_name = 'api-product'
@@ -19,4 +19,7 @@ urlpatterns = [
 
     # product api
     path('search/', ProductSearchListAPIView.as_view(), name='search'),
+
+    # shop address api
+    path('shop-address/', ShopAddressesAPIView.as_view(), name='shop-addresses')
 ]

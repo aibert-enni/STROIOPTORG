@@ -13,6 +13,7 @@ from stripe import Refund
 from apps.order.models import Order, PaymentStatus, PaymentMethod, OrderItem, OrderStatus
 from apps.product.models import Cart, CartProduct, Product
 from apps.product.services import CartService
+from product.models import ShopAddress
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -23,8 +24,9 @@ class OrderService:
         self.request = request
 
     @staticmethod
-    def create_order(user=None, *, delivery_method, delivery_cost = 0, address, payment_method, comments=None, firstname=None, lastname=None,
+    def create_order(user=None, *, delivery_method, delivery_cost = 0, address, shop_address, payment_method, comments=None, firstname=None, lastname=None,
                      company=None, mail=None, phone_number=None) -> Tuple[Order, str | None]:
+
         cart = get_object_or_404(Cart, user=user)
 
         cart_products = cart.products.all()
@@ -64,11 +66,14 @@ class OrderService:
                       delivery_method=delivery_method, delivery_cost=delivery_cost, comments=comments, firstname=firstname,
                       lastname=lastname, company=company, phone_number=phone_number, mail=mail)
 
+        if shop_address:
+            shop_address = get_object_or_404(ShopAddress, pk=shop_address)
+            order.shop_address = shop_address
+
         checkout_url = None
 
-        order.save()
-
         if payment_method == PaymentMethod.CARD:
+            order.save()
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=[{
@@ -82,17 +87,19 @@ class OrderService:
                     'quantity': 1,
                 }],
                 mode='payment',
-                success_url='http://127.0.0.1:8000/order/success/<int:pk>/',
-                cancel_url="http://127.0.0.1:8000/cancel/",
+                success_url=f'http://localhost:8000/order/success/{order.id}/',
+                cancel_url="http://localhost:8000/cancel/",
                 metadata={'order_id': order.id},
             )
 
             order.stripe_payment_id = checkout_session.id
-            order.save()
 
             checkout_url = checkout_session.url
 
+        order.save()
+
         order_items = []
+
 
         for cart_product in cart_products:
             product = cart_product.product
@@ -101,8 +108,7 @@ class OrderService:
 
         OrderItem.objects.bulk_create(order_items)
 
-        if payment_method != PaymentMethod.CARD:
-            cart.products.all().delete()
+        cart.products.all().delete()
 
         return order, checkout_url
 
@@ -202,7 +208,7 @@ class OrderService:
 
     @staticmethod
     def get_order(request: Request, order_id: int) -> Order:
-        order = get_object_or_404(Order, pk=order_id)
+        order = Order.objects.select_related('shop_address').prefetch_related('items').get(pk=order_id)
         return order
 
     @staticmethod

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, TypeVar, Type
 
 from django.db.models import Model
@@ -81,3 +82,10 @@ def get_objects_by_user_or_session_key(request: Request, model_type: Type[T], au
 
     return objs
 
+def format_russian_date(dt):
+    months = {
+        1: 'Января', 2: 'Февраля', 3: 'Марта', 4: 'Апреля',
+        5: 'Мая', 6: 'Июня', 7: 'Июля', 8: 'Августа',
+        9: 'Сентября', 10: 'Октября', 11: 'Ноября', 12: 'Декабря'
+    }
+    return f"{dt.day} {months[dt.month]} {dt.year}"

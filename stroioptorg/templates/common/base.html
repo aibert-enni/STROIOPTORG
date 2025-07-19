@@ -26,19 +26,14 @@
     const user_profile_elem = document.querySelector('#user-profile-text');
     const user_profile_btn = document.querySelector('#user-profile-btn');
     const user_profile_text = document.querySelector('#user-profile-text');
-    api("api/v1/auth/user/", {
+    api("/api/v1/auth/user/", {
         method: 'GET',
         credentials: 'include'
     }).then(response => response.json()).then(data => {
         if (data.email) {
-            user_profile_elem.textContent = "Выйти";
+            user_profile_elem.textContent = "Личный кабинет";
             user_profile_btn.addEventListener('click', () => {
-                api("api/v1/auth/logout/", {
-                    'method': 'POST',
-                    'credentials': 'include'
-                }).then(response => response.json()).then(data => {
-                    console.log(data);
-                })
+                window.location.href = "{% url 'users:account' %}";
             })
         } else {
             user_profile_elem.textContent = "Войти";

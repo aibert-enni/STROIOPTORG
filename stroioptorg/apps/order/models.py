@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, EmailValidator
 from django.db import models
 
 from apps.main.models import TimeStampedModel
-from apps.product.models import Product
+from apps.product.models import Product, ShopAddress
 from apps.users.models import User
 from utils.validators import firstname_validator, lastname_validator, phone_number_validator
 
@@ -14,7 +14,7 @@ class OrderStatus(models.TextChoices):
     PENDING_PAYMENT = 'pending_payment', 'Не оплачен'
 
 class PaymentMethod(models.TextChoices):
-    CARD = 'card', 'Карта'
+    CARD = 'card', 'Оплата картой на сайте'
     IN_STORE = 'in_store', 'Оплата в магазине'
 
 class PaymentStatus(models.TextChoices):
@@ -34,6 +34,7 @@ class Order(TimeStampedModel):
 
     status = models.CharField(choices=OrderStatus, default=OrderStatus.PROCESSING, max_length=20)
 
+    shop_address = models.ForeignKey(ShopAddress, on_delete=models.PROTECT, related_name='orders', null=True)
     address = models.CharField(max_length=255, null=True, blank=True)
 
     total_price = models.PositiveIntegerField(validators=[MinValueValidator(1)])
@@ -58,7 +59,7 @@ class Order(TimeStampedModel):
 
 class OrderItem(TimeStampedModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='order_items')
     product_name = models.CharField(max_length=255)
     price = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])

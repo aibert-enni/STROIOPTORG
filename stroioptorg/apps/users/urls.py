@@ -1,15 +1,19 @@
-from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_views
-from django.urls import path, reverse_lazy
+from django.urls import path
 
 from apps.users.views import RegisterView, LoginView
-from users.views.email import PasswordResetTemplateView, PasswordResetConfirmView
+from apps.users.views.email import PasswordResetTemplateView, PasswordResetConfirmView
+from users.views.account import AccountTemplateView
 
 app_name = 'users'
 
 urlpatterns = [
+    # auth
     path('auth/register', RegisterView.as_view(), name='register'),
     path('auth/login', LoginView.as_view(), name='login'),
+
+    # account
+    path('account/', AccountTemplateView.as_view(), name='account'),
 
     # reset password
     path('password_reset/', PasswordResetTemplateView.as_view(), name='password_reset'),

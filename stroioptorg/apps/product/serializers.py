@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator
 from rest_framework import serializers
 
-from apps.product.models import CartProduct, Cart, Product, Category
+from apps.product.models import CartProduct, Cart, Product, Category, ShopAddress
 
 
 # Product serializers
@@ -80,5 +80,19 @@ class SearchQuerySerializer(serializers.Serializer):
     price_to = serializers.IntegerField(validators=[MinValueValidator(1)], required=False)
     order = serializers.ChoiceField(choices=order_types, default='price')
 
+# Shop address
 
+class ShopAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopAddress
+        fields = '__all__'
 
+class ShopAddressesByCityListSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    name = serializers.CharField(required=True)
+    shops_addresses = ShopAddressSerializer(many=True)
+
+class ShopAddressesByRegionListSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    name = serializers.CharField(required=True)
+    cities = ShopAddressesByCityListSerializer(many=True)

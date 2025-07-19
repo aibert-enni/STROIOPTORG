@@ -1,3 +1,3 @@
 @echo off
-stripe listen --forward-to localhost:4242/webhook
+stripe listen --forward-to localhost:8000/api/v1/stripe/webhook/
 pause

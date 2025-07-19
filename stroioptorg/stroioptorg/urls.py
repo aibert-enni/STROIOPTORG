@@ -1,17 +1,16 @@
-from dj_rest_auth.views import PasswordResetConfirmView
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include, re_path, reverse
 
-from users.views.auth_view import GoogleLogin, GoogleLoginCallback
-from users.views.email import CustomConfirmEmailAPIView
+from apps.users.views.auth_view import GoogleLogin, GoogleLoginCallback
+from apps.users.views.email import CustomConfirmEmailAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.main.urls', namespace='main')),
-    path('', include('users.urls', namespace='users')),
-    path('', include('product.urls', namespace='product')),
-    path('', include('order.urls', namespace='order')),
+    path('', include('apps.users.urls', namespace='users')),
+    path('', include('apps.product.urls', namespace='product')),
+    path('', include('apps.order.urls', namespace='order')),
 
     # auth
     path('api/v1/auth/', include('dj_rest_auth.urls')),
@@ -31,10 +30,11 @@ urlpatterns = [
     ),
 
     # api v1
-    path('api/v1/', include('product.api_urls', namespace='api-product')),
-    path('api/v1/', include('order.api_urls', namespace='api-order')),
-    path('api/v1/', include('wishlist.api_urls', namespace='api-wishlist')),
-    path('api/v1/', include('review.api_urls', namespace='api-review')),
+    path('api/v1/', include('apps.product.api_urls', namespace='api-product')),
+    path('api/v1/', include('apps.order.api_urls', namespace='api-order')),
+    path('api/v1/', include('apps.wishlist.api_urls', namespace='api-wishlist')),
+    path('api/v1/', include('apps.review.api_urls', namespace='api-review')),
+    path('api/v1/', include('apps.health.api_urls', namespace='api-health')),
 ]
 
 if settings.DEBUG:
