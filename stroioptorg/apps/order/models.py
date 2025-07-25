@@ -9,7 +9,7 @@ from utils.validators import firstname_validator, lastname_validator, phone_numb
 class OrderStatus(models.TextChoices):
     COMPLETED = 'completed', 'Выполнен'
     IN_TRANSIT = 'in_transit', 'В пути'
-    PROCESSING = 'processing', 'В обработке'
+    PROCESSING = 'processing', 'Обработка'
     CANCELLED = 'cancelled', 'Отменен'
     PENDING_PAYMENT = 'pending_payment', 'Не оплачен'
 

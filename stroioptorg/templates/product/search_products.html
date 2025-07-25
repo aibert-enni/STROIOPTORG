@@ -1,0 +1,214 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="mt-[9px] mb-[110px]" x-data="searchController">
+        <div id="catalog-header" class="flex gap-[18px] items-center mb-[40px]">
+            <template x-if="data">
+                <h1 class="font-bold text-[30px] text-[#2C333D]"
+                    x-text="`По запросу «${query}» найдено ${data.count} товаров`"></h1>
+            </template>
+        </div>
+        <div class="flex gap-[20px]">
+            <div class="flex flex-col gap-[40px]">
+                <div class="flex flex-col gap-[18px]">
+                    <p class="filter-title">Цена, ₽</p>
+                    <div class="flex gap-[18px]">
+                        <div class="flex border border-[#DFE0E2] rounded px-[15px] py-[13px] gap-[5px]">
+                            <p class="text-[#A7AAAE]">от</p>
+                            <input x-model="price_from" id="price-from-input" class="focus:outline-0 max-w-[60px]"
+                                   type="number">
+                        </div>
+                        <div class="flex border border-[#DFE0E2] rounded px-[15px] py-[13px] gap-[5px]">
+                            <p class="text-[#A7AAAE]">до</p>
+                            <input x-model="price_to" id="price-to-input" class="focus:outline-0 max-w-[60px]"
+                                   type="number">
+                        </div>
+                    </div>
+                </div>
+                <button @click="fetchProducts()" id="filters-request-btn"
+                        class="bg-primary text-white text-[13px] font-bold rounded py-[15px] uppercase">Применить
+                    фильтры
+                </button>
+            </div>
+            <div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <label for="sort">Сортировка:</label>
+                        <select id="sort" class="w-full border rounded-lg py-2 px-2" x-model="sort">
+                            <option selected value="" id="order-btn">
+                                <span id="order-text"></span>
+                                <img src="{% static 'images/dropdown-arrow.svg' %}"
+                                     alt="Иконка для сортировки каталога">
+                            </option>
+
+                            <option value="price">
+                                По возрастанию цены
+                            </option>
+                            <option value="-price">
+                                По убыванию цены
+                            </option>
+                            <option value="-created_at">
+                                По новинкам
+                            </option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <p>Показать по:</p>
+                        <div class="flex items-center gap-2.5">
+                            <button @click="setPagination(9)" :style="paginate == 9 ? 'background-color: #F6F8FB; color:#186FD4; border: none;' : ''" class="paginate_by rounded border border-[#EEEEEE] hover:border-none hover:bg-[#F6F8FB] hover:text-[#186FD4] w-[50px] h-[45px]">
+                                9
+                            </button>
+                            <button @click="setPagination(12)" :style="paginate == 12 ? 'background-color: #F6F8FB; color:#186FD4; border: none;' : ''" class="paginate_by rounded border border-[#EEEEEE] hover:border-none hover:bg-[#F6F8FB] hover:text-[#186FD4] w-[50px] h-[45px]">
+                                12
+                            </button>
+                            <button @click="setPagination(18)" :style="paginate == 18 ? 'background-color: #F6F8FB; color:#186FD4; border: none;' : ''" class="paginate_by rounded border border-[#EEEEEE] hover:border-none hover:bg-[#F6F8FB] hover:text-[#186FD4] w-[50px] h-[45px]">
+                                18
+                            </button>
+                            <button @click="setPagination(24)" :style="paginate == 24 ? 'background-color: #F6F8FB; color:#186FD4; border: none;' : ''" class="paginate_by rounded border border-[#EEEEEE] hover:border-none hover:bg-[#F6F8FB] hover:text-[#186FD4] w-[50px] h-[45px]">
+                                24
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="products-container"
+                     class="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-[90px] gap-[17px]">
+                    <template x-if="data && data.results">
+                        <template x-for="product in data.results">
+                            <article class="flex h-full w-full flex-col px-[15px] gap-2.5">
+                                <div class="p-3.5">
+                                    <img class="w-[248px] h-[202px]" :src="product.cover_url"
+                                         :alt="product.name"/>
+                                </div>
+                                <p style="color: #A8ADB2;" class="text-sm text-[#A8ADB2]"
+                                   x-text="'Артикул: ' + product.sku"></p>
+                                <p class="font-medium text-lg leading-[26px] py-2.5" x-text="product.name"></p>
+                                <div class="flex items-center">
+                                    <template x-if="product.discount && product.discount > 0">
+                                        <del style="color: #8F9296;" class="mr-2.5" x-text="product.price + ' ₽'"></del>
+                                    </template>
+                                    <p style="color: #003B73;"
+                                       class="font-semibold text-xl text-[#003B73] mr-[7px]"
+                                       x-text="product.get_discount_price + ' ₽'">
+                                    </p>
+                                    <template x-if="product.discount && product.discount > 0">
+                                        <p class="bg-[#1B9665] py-[3px] px-[5px] font-bold rounded text-white text-[11px]"
+                                           x-text="'-' + product.discount + '%'">
+                                        </p>
+                                    </template>
+                                </div>
+                                <div class="flex items-center justify-between h-[40px]">
+                                    <a class="flex items-center gap-2.5 bg-primary rounded font-medium text-white px-4 h-full"
+                                       :href="`/catalog/product/${product.slug}/`"
+                                    ><img
+                                            src="{% static 'images/white-cart.svg' %}" alt="Иконка корзины"> Купить</a>
+                                    <div class="flex items-center gap-[9px] h-full">
+                                        <button style="border-color: #F3F4F5;"
+                                                class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
+                                                class="h-[14px] w-[17px]" src="{% static 'images/heart-icon.svg' %}"
+                                                alt="Иконка для добавления в избранные"></button>
+                                        <button style="border-color: #F3F4F5;"
+                                                class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
+                                                class="h-[18px] w-[14px]" src="{% static 'images/chart-icon.svg' %}"
+                                                alt="Иконка для сравнения продукта"></button>
+                                    </div>
+                                </div>
+                            </article>
+                        </template>
+                    </template>
+                </div>
+                <div class="flex gap-2.5">
+                    <div class="flex gap-2.5 w-full justify-center">
+                        <div id="pagination-prev-btn"
+                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                            Назад
+                        </div>
+                        <div id="pages-container" class="flex gap-2.5">
+
+                        </div>
+                        <div id="pagination-next-btn"
+                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                            Вперед
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+
+        function searchController() {
+            return {
+                sort: '-price',
+                price_from: '',
+                price_to: '',
+                paginate: 9,
+                products: [],
+                query: '',
+                fetchUrl: new URL('/api/v1/search/', window.location.origin),
+                data: null,
+
+                async init() {
+                    this.initParams()
+                    await this.fetchProducts();
+                    await this.$watch('sort', value => {
+                        this.fetchProducts();
+                    })
+                },
+
+                initParams() {
+                    const params = new URLSearchParams(window.location.search);
+                    const query = params.get('search');
+                    this.query = query
+                    this.fetchUrl.searchParams.set('search', query);
+
+                    const search_input = document.querySelector('#search-input');
+                    search_input.value = query;
+                },
+
+                async setPagination(paginate) {
+                    this.paginate = paginate;
+                    this.fetchUrl.searchParams.set('paginate_by', paginate);
+                    await this.fetchProducts()
+                },
+
+                async fetchProducts() {
+
+                    if (this.price_from) {
+                        this.fetchUrl.searchParams.set('price_from', this.price_from);
+                    } else {
+                        this.fetchUrl.searchParams.delete('price_from');
+                    }
+
+                    if (this.price_to) {
+                        this.fetchUrl.searchParams.set('price_to', this.price_to);
+                    } else {
+                        this.fetchUrl.searchParams.delete('price_to');
+                    }
+
+                    if (this.sort) {
+                        this.fetchUrl.searchParams.set('order', this.sort);
+                    } else {
+                        this.fetchUrl.searchParams.delete('order');
+                    }
+
+                    const response = await fetch(this.fetchUrl, {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json();
+
+                    console.log(data);
+
+                    this.data = data;
+                },
+
+
+            }
+        }
+    </script>
+{% endblock %}

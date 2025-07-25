@@ -67,7 +67,7 @@
         transform: rotate(45deg);
     }
 
-    .filter-checkbox:checked{
+    .filter-checkbox:checked {
         background-color: #186FD4;
     }
 
@@ -86,9 +86,15 @@
         font-weight: bold;
     }
 
-    table.cart-table{
+    .h3 {
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    table.cart-table {
         width: 100%;
         border-collapse: separate;
+        border-spacing: 0;
     }
 
     table.cart-table thead th:first-child {
@@ -96,6 +102,7 @@
         border-top-width: 1px;
         border-top-left-radius: 5px;
     }
+
     table.cart-table thead th:last-child {
         border-right-width: 1px;
         border-top-width: 1px;
@@ -129,6 +136,7 @@
     table.cart-table tr td:first-child {
         border-left-width: 1px;
     }
+
     table.cart-table tr td:last-child {
         border-right-width: 1px;
     }
@@ -148,5 +156,23 @@
         border-bottom-width: 1px;
         border-right-width: 1px;
         border-bottom-right-radius: 5px;
+    }
+
+    #account-switcher {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    #account-switcher label {
+        border-radius: 8px;
+    }
+
+    #account-switcher label:has(input:checked) {
+        background-color: #186FD4;
+        color: white;
+    }
+
+    #account-switcher label:has(input:checked) svg{
+        color: white;
     }
 }

@@ -13,6 +13,7 @@ urlpatterns = [
     path('', include('apps.order.urls', namespace='order')),
 
     # auth
+    path('api/v1/auth/', include('apps.users.api-urls')),
     path('api/v1/auth/', include('dj_rest_auth.urls')),
     re_path(
         r'^api/v1/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$',

@@ -87,12 +87,13 @@ class CartProductService:
 
     @staticmethod
     def get_cart_product(request, cart_product_id):
-        return get_object_by_user_or_session_key(request, CartProduct, get_by_auth=False, auth_fields=['cart'],
+        return get_object_by_user_or_session_key(request, CartProduct, get_by_auth=True, auth_fields=['cart'],
                                                  pk=cart_product_id)
 
     @staticmethod
     def get_cart_products(request):
-        return get_objects_by_user_or_session_key(request, CartProduct, get_by_auth=False, auth_fields=['cart'])
+        print(request.user)
+        return get_objects_by_user_or_session_key(request, CartProduct, get_by_auth=True, auth_fields=['cart'])
 
 
 class ProductByCategoryListService:
@@ -181,16 +182,26 @@ class ProductService:
             sort = {}
 
         if search_input:
-            products = ProductDocument.search().query("bool",
-                                                      should=[
-                                                          dsl_Q("match", name={'query': search_input.strip(),
-                                                                               'operator': 'and'}),
-                                                          dsl_Q("nested", path="product_attributes",
-                                                                query=dsl_Q("match",
-                                                                            product_attributes__attribute_value={
-                                                                                'query': search_input,
-                                                                                'operator': 'and'}))
-                                                      ], filter=must_filters).sort(sort).to_queryset()
+            words = search_input.strip().split()
+            must_clauses = []
+
+            for word in words:
+                must_clauses.append(
+                    dsl_Q("bool", should=[
+                        dsl_Q("match", name={'query': word, 'operator': 'and'}),
+                        dsl_Q("nested", path="product_attributes",
+                              query=dsl_Q("match",
+                                          product_attributes__attribute_value={'query': word, 'operator': 'and'}))
+                    ],
+                          minimum_should_match=1)
+                )
+
+            products = ProductDocument.search().query(
+                "bool",
+                must=must_clauses,
+                filter=must_filters
+            ).sort(sort).to_queryset()
+
             return products
         else:
             return Product.objects.all()

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.order.models import DeliveryMethod, PaymentMethod, Order, OrderItem
+from apps.order.models import DeliveryMethod, PaymentMethod, Order, OrderItem, OrderStatus
 from utils.common import format_russian_date
 
 from utils.validators import phone_number_validator, firstname_validator, lastname_validator
@@ -22,6 +22,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderResponseSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
+    status_label = serializers.SerializerMethodField()
+
+    def get_status_label(self, instance):
+        return OrderStatus(instance.status).label
 
     class Meta:
         model = Order
@@ -33,7 +37,7 @@ class OrderResponseSerializer(serializers.ModelSerializer):
 
         data['created_at'] = format_russian_date(instance.created_at)
 
-        if data['delivery_method'] == DeliveryMethod.PICKUP:
+        if data['delivery_method'] == DeliveryMethod.PICKUP and instance.shop_address:
             data['address'] = instance.shop_address.full_address
 
         data['payment_method'] = PaymentMethod(data['payment_method']).label

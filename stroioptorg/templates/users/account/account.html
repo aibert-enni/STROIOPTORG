@@ -3,313 +3,96 @@
 
 {% block content %}
     <h1 class="h1 mb-7">Личный кабинет</h1>
-    <div class="flex" x-data="accountController()">
-        <div class="w-full">
-            <p class="h3 mb-6">Здравствуйте, <span class="capitalize" x-text="firstname"></span>!</p>
-            <div id="account-switcher" class="w-full h-[199px] mb-6">
-                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
-                       id="my-orders-label">
-                    <input x-model="account_switcher" type="radio" name="account-section" value="orders" class="hidden">
-                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
-                        <div class="flex justify-center items-center h-[54px] w-[70px]">
-                            <svg width="40" height="36" viewBox="0 0 40 36" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22.1111 3.11111H39M22.1111 11.5556H32.6667M22.1111 24.2222H39M22.1111 32.6667H32.6667M1 3.11111C1 2.55121 1.22242 2.01424 1.61833 1.61833C2.01424 1.22242 2.55121 1 3.11111 1H11.5556C12.1155 1 12.6524 1.22242 13.0483 1.61833C13.4442 2.01424 13.6667 2.55121 13.6667 3.11111V11.5556C13.6667 12.1155 13.4442 12.6524 13.0483 13.0483C12.6524 13.4442 12.1155 13.6667 11.5556 13.6667H3.11111C2.55121 13.6667 2.01424 13.4442 1.61833 13.0483C1.22242 12.6524 1 12.1155 1 11.5556V3.11111ZM1 24.2222C1 23.6623 1.22242 23.1254 1.61833 22.7294C2.01424 22.3335 2.55121 22.1111 3.11111 22.1111H11.5556C12.1155 22.1111 12.6524 22.3335 13.0483 22.7294C13.4442 23.1254 13.6667 23.6623 13.6667 24.2222V32.6667C13.6667 33.2266 13.4442 33.7635 13.0483 34.1595C12.6524 34.5554 12.1155 34.7778 11.5556 34.7778H3.11111C2.55121 34.7778 2.01424 34.5554 1.61833 34.1595C1.22242 33.7635 1 33.2266 1 32.6667V24.2222Z"
-                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                      stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <p class="">Мои заказы</p>
-                    </div>
-                </label>
-                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
-                       id="my-orders-label">
-                    <input x-model="account_switcher" type="radio" name="account-section" value="profile"
-                           class="hidden">
-                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
-                        <div class="flex justify-center items-center h-[54px] w-[70px]">
-                            <svg width="41" height="48" viewBox="0 0 41 48" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.75 43.75V39C1.75 36.4804 2.75057 34.0641 4.5316 32.2825C6.31262 30.5009 8.72822 29.5 11.247 29.5H19.5568M6.49848 10.5C6.49848 13.0196 7.49905 15.4359 9.28008 17.2175C11.0611 18.9991 13.4767 20 15.9955 20C18.5142 20 20.9298 18.9991 22.7108 17.2175C24.4919 15.4359 25.4924 13.0196 25.4924 10.5C25.4924 7.98044 24.4919 5.56408 22.7108 3.78249C20.9298 2.00089 18.5142 1 15.9955 1C13.4767 1 11.0611 2.00089 9.28008 3.78249C7.49905 5.56408 6.49848 7.98044 6.49848 10.5ZM31.2381 30.9487C31.7011 30.4856 32.2508 30.1182 32.8557 29.8675C33.4607 29.6169 34.109 29.4879 34.7638 29.4879C35.4186 29.4879 36.067 29.6169 36.672 29.8675C37.2769 30.1182 37.8266 30.4856 38.2896 30.9487C38.7526 31.4119 39.1199 31.9618 39.3704 32.5669C39.621 33.172 39.75 33.8206 39.75 34.4756C39.75 35.1306 39.621 35.7792 39.3704 36.3844C39.1199 36.9895 38.7526 37.5393 38.2896 38.0025L30.2409 46.125H23.1182V39L31.2381 30.9487Z"
-                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                      stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <p class="nowrap">Изменить профиль</p>
-                    </div>
-                </label>
-                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer "
-                       id="my-orders-label">
-                    <input x-model="account_switcher" type="radio" name="account-section" value="delivery-address"
-                           class="hidden ">
-                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
-                        <div class="flex justify-center items-center h-[54px] w-[70px]">
-                            <svg width="41" height="40" viewBox="0 0 41 40" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19.9181 31L15.9845 23L2.21702 16C2.02872 15.9123 1.86915 15.7714 1.75728 15.5941C1.64541 15.4168 1.58594 15.2106 1.58594 15C1.58594 14.7894 1.64541 14.5832 1.75728 14.4059C1.86915 14.2286 2.02872 14.0877 2.21702 14L37.6192 1L31.9135 17.068M33.6856 31V31.02M37.8571 35.242C38.6825 34.403 39.2446 33.3339 39.4724 32.1699C39.7002 31.006 39.5835 29.7995 39.137 28.703C38.6904 27.6066 37.9342 26.6694 36.9638 26.01C35.9935 25.3507 34.8526 24.9987 33.6856 24.9987C32.5185 24.9987 31.3777 25.3507 30.4073 26.01C29.437 26.6694 28.6807 27.6066 28.2342 28.703C27.7877 29.7995 27.6709 31.006 27.8987 32.1699C28.1265 33.3339 28.6887 34.403 29.514 35.242C30.3361 36.08 31.7267 37.332 33.6856 39C35.7527 37.22 37.1452 35.968 37.8571 35.242Z"
-                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                      stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <p class="">Адрес доставки</p>
-                    </div>
-                </label>
-                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
-                       id="my-orders-label">
-                    <input x-model="account_switcher" type="radio" name="account-section" value="wishlist"
-                           class="hidden">
-                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
-                        <div class="flex justify-center items-center h-[54px] w-[70px]">
-                            <svg width="41" height="36" viewBox="0 0 41 36" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M36.4836 3.93013C35.5546 3.00118 34.453 2.2643 33.2386 1.76154C32.0261 1.25876 30.7263 1 29.4119 1C28.0994 1 26.7978 1.25876 25.5853 1.76154C24.3709 2.2643 23.2693 3.00118 22.3403 3.93013L20.4133 5.85711L18.4865 3.93013C16.611 2.05462 14.0674 1.00096 11.4149 1.00096C8.76258 1.00096 6.21879 2.05462 4.34326 3.93013C2.46773 5.80566 1.41406 8.34945 1.41406 11.0018C1.41406 13.6541 2.46773 16.1979 4.34326 18.0734L6.27023 20.0004L20.4133 34.1437L34.5566 20.0004L36.4836 18.0734C37.4125 17.1448 38.1488 16.0425 38.6523 14.8292C39.1559 13.6157 39.4141 12.3152 39.4141 11.0018C39.4141 9.68834 39.1559 8.38781 38.6523 7.17436C38.1488 5.96109 37.4125 4.85872 36.4836 3.93013Z"
-                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                      stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <p class="">Избранное</p>
-                    </div>
-                </label>
-                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
-                       id="my-orders-label">
-                    <input x-model="account_switcher" type="radio" name="account-section" value="password"
-                           class="hidden">
-                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
-                        <div class="flex justify-center items-center h-[54px] w-[70px]">
-                            <svg width="41" height="40" viewBox="0 0 41 40" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20.25 20.0272C19.6893 20.0272 19.1516 19.8045 18.7551 19.408C18.3586 19.0115 18.1359 18.4738 18.1359 17.9131C18.1359 17.3524 18.3586 16.8146 18.7551 16.4181C19.1516 16.0217 19.6893 15.7989 20.25 15.7989C20.8107 15.7989 21.3484 16.0217 21.7449 16.4181C22.1414 16.8146 22.3641 17.3524 22.3641 17.9131C22.3641 18.4738 22.1414 19.0115 21.7449 19.408C21.3484 19.8045 20.8107 20.0272 20.25 20.0272ZM20.25 20.0272V25.3125M20.25 1C25.1883 5.36901 31.6335 7.6438 38.2201 7.3424C39.1791 10.6045 39.4725 14.0262 39.083 17.4039C38.6934 20.7817 37.6288 24.0467 35.9525 27.005C34.2762 29.9632 32.0223 32.5542 29.3248 34.6242C26.6273 36.6941 23.5413 38.2007 20.25 39.0544C16.9587 38.2007 13.8727 36.6941 11.1752 34.6242C8.47769 32.5542 6.22381 29.9632 4.54749 27.005C2.87116 24.0467 1.80659 20.7817 1.41705 17.4039C1.0275 14.0262 1.32092 10.6045 2.27988 7.3424C8.86651 7.6438 15.3117 5.36901 20.25 1Z"
-                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                      stroke-linejoin="round"></path>
-                            </svg>
+    <div class="flex gap-5 mb-28">
+        <div class="basis-1/5 shadow-md h-fit">
+            <a href="{% url 'users:account' %}"
+               class="group flex items-end gap-2 rounded-t-lg text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'my_account' %} bg-[#011120] text-white  border-b-0{% endif %}">
+                <svg class="{% if account_page == 'my_account' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M4.168 17.349C4.41551 16.5252 4.92197 15.8032 5.61225 15.29C6.30252 14.7768 7.13985 14.4997 8 14.5H12C12.8613 14.4997 13.6996 14.7774 14.3904 15.2918C15.0812 15.8062 15.5875 16.5298 15.834 17.355M1 10.5C1 11.6819 1.23279 12.8522 1.68508 13.9442C2.13738 15.0361 2.80031 16.0282 3.63604 16.864C4.47177 17.6997 5.46392 18.3626 6.55585 18.8149C7.64778 19.2672 8.8181 19.5 10 19.5C11.1819 19.5 12.3522 19.2672 13.4442 18.8149C14.5361 18.3626 15.5282 17.6997 16.364 16.864C17.1997 16.0282 17.8626 15.0361 18.3149 13.9442C18.7672 12.8522 19 11.6819 19 10.5C19 9.3181 18.7672 8.14778 18.3149 7.05585C17.8626 5.96392 17.1997 4.97177 16.364 4.13604C15.5282 3.30031 14.5361 2.63738 13.4442 2.18508C12.3522 1.73279 11.1819 1.5 10 1.5C8.8181 1.5 7.64778 1.73279 6.55585 2.18508C5.46392 2.63738 4.47177 3.30031 3.63604 4.13604C2.80031 4.97177 2.13738 5.96392 1.68508 7.05585C1.23279 8.14778 1 9.3181 1 10.5ZM7 8.5C7 9.29565 7.31607 10.0587 7.87868 10.6213C8.44129 11.1839 9.20435 11.5 10 11.5C10.7956 11.5 11.5587 11.1839 12.1213 10.6213C12.6839 10.0587 13 9.29565 13 8.5C13 7.70435 12.6839 6.94129 12.1213 6.37868C11.5587 5.81607 10.7956 5.5 10 5.5C9.20435 5.5 8.44129 5.81607 7.87868 6.37868C7.31607 6.94129 7 7.70435 7 8.5Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+                Мой аккаунт
+            </a>
+            <a href="{% url 'users:profile-edit' %}"
+               class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'profile-edit' %} bg-[#011120] text-white border-b-0{% endif %}">
+                <svg class="{% if account_page == 'profile-edit' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="20" height="23" viewBox="0 0 20 23"
+                     fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M1 21.3947V19.1842C1 18.0117 1.46579 16.8872 2.2949 16.0581C3.124 15.2289 4.24852 14.7632 5.42105 14.7632H9.28947M3.21053 5.92105C3.21053 7.09359 3.67631 8.2181 4.50542 9.04721C5.33453 9.87632 6.45904 10.3421 7.63158 10.3421C8.80412 10.3421 9.92863 9.87632 10.7577 9.04721C11.5868 8.2181 12.0526 7.09359 12.0526 5.92105C12.0526 4.74852 11.5868 3.624 10.7577 2.7949C9.92863 1.96579 8.80412 1.5 7.63158 1.5C6.45904 1.5 5.33453 1.96579 4.50542 2.7949C3.67631 3.624 3.21053 4.74852 3.21053 5.92105ZM14.7274 15.4374C14.9429 15.2218 15.1988 15.0509 15.4804 14.9342C15.762 14.8176 16.0639 14.7575 16.3687 14.7575C16.6735 14.7575 16.9753 14.8176 17.257 14.9342C17.5386 15.0509 17.7945 15.2218 18.01 15.4374C18.2255 15.6529 18.3965 15.9088 18.5132 16.1904C18.6298 16.472 18.6899 16.7739 18.6899 17.0787C18.6899 17.3835 18.6298 17.6853 18.5132 17.967C18.3965 18.2486 18.2255 18.5045 18.01 18.72L14.2632 22.5H10.9474V19.1842L14.7274 15.4374Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
 
-                        </div>
-                        <p class="">Сменить пароль</p>
-                    </div>
-                </label>
-                <div @click="logout()" id="logout"
-                     class="flex flex-col justify-center items-center gap-4 cursor-pointer">
-                    <div class="flex justify-center items-center h-[54px] w-[70px]">
-                        <svg width="40" height="36" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M24.3082 9.44444V5.22222C24.3082 4.10242 23.8633 3.02848 23.0715 2.23666C22.2797 1.44484 21.2057 1 20.0859 1H5.30816C4.18836 1 3.11442 1.44484 2.3226 2.23666C1.53078 3.02848 1.08594 4.10242 1.08594 5.22222V30.5556C1.08594 31.6754 1.53078 32.7493 2.3226 33.5411C3.11442 34.3329 4.18836 34.7778 5.30816 34.7778H20.0859C21.2057 34.7778 22.2797 34.3329 23.0715 33.5411C23.8633 32.7493 24.3082 31.6754 24.3082 30.5556V26.3333M13.7526 17.8889H39.0859M39.0859 17.8889L32.7526 11.5556M39.0859 17.8889L32.7526 24.2222"
-                                  stroke="#2C333D" stroke-width="1.8" stroke-linecap="round"
-                                  stroke-linejoin="round"></path>
-                        </svg>
-                    </div>
-                    <p>Выйти</p>
-                </div>
-            </div>
-            <div id="account-content">
-                <template x-if="account_switcher === 'orders' && orders_data">
-                    <div>
-                        <p class="h3 mb-6">Текущие заказы</p>
-                        <table class="cart-table">
-                            <thead>
-                            <tr class="border-b">
-                                <th class="text-left text-[#45484A] text-sm font-bold uppercase pl-5">Номер</th>
-                                <th class="text-left text-[#45484A] text-sm font-bold uppercase">Дата</th>
-                                <th class="text-left text-[#45484A] text-sm font-bold uppercase">Статус</th>
-                                <th class="text-left text-[#45484A] text-sm font-bold uppercase pr-5">Итого</th>
-                            </tr>
-                            </thead>
-                            <tbody class="font-normal">
-                            <template x-for="order in orders_data.results" :key="order.id">
-                                <tr class="border" :id="order.id">
-                                    <td class="pr-5">
-                                        <p x-text="'#' + order.id"></p>
-                                    </td>
-                                    <td class="pr-5">
-                                        <p x-text="order.created_at"></p>
-                                    </td>
-                                    <td class="pr-5">
-                                        <div :style="`border-color: ${order.color}`"
-                                             class="flex w-fit border rounded-lg items-center gap-2 py-1 px-2">
-                                            <p :style="`color: ${order.color}`">&bull;</p>
-                                            <p class="uppercase font-medium text-sm" :style="`color: ${order.color}`"
-                                               x-text="order.status_label"></p>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="flex w-full justify-between items-center">
-                                            <p class="text-[#003B73] text-xl whitespace-nowrap"><span
-                                                    x-text="order.total_price"></span> ₽</p>
-                                            <div class="bg-[#F6F8FB] ml-4 rounded-lg h-12 w-12 flex justify-center items-center">
-                                                <a href="#" class="text-[#186FD4] rounded-lg">
-                                                    >
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                            </tbody>
-                        </table>
-                        <div class="flex mt-6 gap-2.5">
-                            <button @click="getPrevOrders()" id="orders_prev_btn" :disabled="orders_data.previous == null"
-                                    class="py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white">
-                                <svg width="23" height="10" viewBox="0 0 23 10" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M0.540381 4.54038C0.28654 4.79422 0.28654 5.20578 0.540381 5.45962L4.67696 9.59619C4.9308 9.85003 5.34235 9.85003 5.59619 9.59619C5.85003 9.34235 5.85003 8.9308 5.59619 8.67696L1.91924 5L5.59619 1.32304C5.85003 1.0692 5.85003 0.657647 5.59619 0.403806C5.34235 0.149965 4.9308 0.149965 4.67696 0.403806L0.540381 4.54038ZM23 5V4.35L1 4.35V5V5.65L23 5.65V5Z"
-                                          fill="currentColor"></path>
-                                </svg>
-                                <p>Назад</p>
-                            </button>
-                            <template x-for="pagination in pagination_range">
-                                <button @click="getOrdersByPage(pagination)" x-text="pagination"
-                                        :class="pagination == orders_data.current_page
-                                        ? 'py-5 px-6 border rounded-lg flex justify-center items-center gap-2.5 cursor-pointer bg-black text-white'
-                                        : 'py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white'">
-                                </button>
-                            </template>
-                            <button @click="getNextOrders()" id="orders_next_btn" :disabled="orders_data.next == null"
-                                    class="py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white">
-                                <p>Далее</p>
-                                <svg class="rotate-180" width="23" height="10" viewBox="0 0 23 10" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M0.540381 4.54038C0.28654 4.79422 0.28654 5.20578 0.540381 5.45962L4.67696 9.59619C4.9308 9.85003 5.34235 9.85003 5.59619 9.59619C5.85003 9.34235 5.85003 8.9308 5.59619 8.67696L1.91924 5L5.59619 1.32304C5.85003 1.0692 5.85003 0.657647 5.59619 0.403806C5.34235 0.149965 4.9308 0.149965 4.67696 0.403806L0.540381 4.54038ZM23 5V4.35L1 4.35V5V5.65L23 5.65V5Z"
-                                          fill="currentColor"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </template>
-            </div>
+                Изменить профиль
+            </a>
+            <a href="{% url 'users:orders' %}"
+               class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'orders' %} bg-[#011120] text-white border-b-0{% endif %}">
+                <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M11 2.5H19M11 6.5H16M11 12.5H19M11 16.5H16M1 2.5C1 2.23478 1.10536 1.98043 1.29289 1.79289C1.48043 1.60536 1.73478 1.5 2 1.5H6C6.26522 1.5 6.51957 1.60536 6.70711 1.79289C6.89464 1.98043 7 2.23478 7 2.5V6.5C7 6.76522 6.89464 7.01957 6.70711 7.20711C6.51957 7.39464 6.26522 7.5 6 7.5H2C1.73478 7.5 1.48043 7.39464 1.29289 7.20711C1.10536 7.01957 1 6.76522 1 6.5V2.5ZM1 12.5C1 12.2348 1.10536 11.9804 1.29289 11.7929C1.48043 11.6054 1.73478 11.5 2 11.5H6C6.26522 11.5 6.51957 11.6054 6.70711 11.7929C6.89464 11.9804 7 12.2348 7 12.5V16.5C7 16.7652 6.89464 17.0196 6.70711 17.2071C6.51957 17.3946 6.26522 17.5 6 17.5H2C1.73478 17.5 1.48043 17.3946 1.29289 17.2071C1.10536 17.0196 1 16.7652 1 16.5V12.5Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+
+                Мои заказы
+            </a>
+            <a href="{% url 'users:delivery-address' %}"
+               class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'delivery-address' %} bg-[#011120] text-white border-b-0{% endif %}">
+                <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M9.0188 19.9835C8.75303 19.9863 8.48936 19.936 8.24329 19.8356C7.99721 19.7351 7.77368 19.5865 7.5858 19.3985L3.3418 15.1555C2.35116 14.1644 1.63823 12.9304 1.27438 11.5772C0.910525 10.2239 0.908519 8.79884 1.26856 7.44457C1.6286 6.09029 2.33805 4.85434 3.3259 3.86044C4.31375 2.86654 5.54535 2.14955 6.8974 1.78125C8.24945 1.41295 9.67453 1.40626 11.03 1.76184C12.3854 2.11742 13.6237 2.8228 14.6209 3.80738C15.618 4.79195 16.339 6.02118 16.7118 7.37201C17.0845 8.72285 17.0959 10.1479 16.7448 11.5045M12.9988 20.4985L17.9988 15.4985M17.9988 15.4985V19.9985M17.9988 15.4985H13.4988M5.9988 9.49851C5.9988 10.2942 6.31487 11.0572 6.87748 11.6198C7.44009 12.1824 8.20315 12.4985 8.9988 12.4985C9.79445 12.4985 10.5575 12.1824 11.1201 11.6198C11.6827 11.0572 11.9988 10.2942 11.9988 9.49851C11.9988 8.70286 11.6827 7.9398 11.1201 7.37719C10.5575 6.81458 9.79445 6.49851 8.9988 6.49851C8.20315 6.49851 7.44009 6.81458 6.87748 7.37719C6.31487 7.9398 5.9988 8.70286 5.9988 9.49851Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+                Адрес доставки
+            </a>
+            <a href="#"
+               class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'wishlist' %} bg-[#011120] text-white border-b-0{% endif %}">
+                <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M16.6514 2.32294C16.2253 1.90361 15.719 1.5709 15.1615 1.34388C14.604 1.11686 14.0063 1 13.4027 1C12.799 1 12.2013 1.11686 11.6439 1.34388C11.0864 1.5709 10.5801 1.90361 10.154 2.32294L9.5 2.97264L8.84602 2.32294C8.41993 1.90361 7.91362 1.5709 7.35614 1.34388C6.79866 1.11686 6.20096 1 5.59733 1C4.9937 1 4.39601 1.11686 3.83852 1.34388C3.28104 1.5709 2.77474 1.90361 2.34865 2.32294C0.548071 4.0888 0.437658 7.07076 2.70537 9.33639L9.5 16L16.2946 9.33639C18.5623 7.07076 18.4519 4.0888 16.6514 2.32294Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+                Избранные товары
+            </a>
+            <a href="{% url 'users:password-change' %}"
+               class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'password' %} bg-[#011120] text-white border-b-0{% endif %}">
+                <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M10.0028 10.5C9.73755 10.5 9.48319 10.3946 9.29566 10.2071C9.10812 10.0196 9.00276 9.76522 9.00276 9.5C9.00276 9.23478 9.10812 8.98043 9.29566 8.79289C9.48319 8.60536 9.73755 8.5 10.0028 8.5C10.268 8.5 10.5223 8.60536 10.7099 8.79289C10.8974 8.98043 11.0028 9.23478 11.0028 9.5C11.0028 9.76522 10.8974 10.0196 10.7099 10.2071C10.5223 10.3946 10.268 10.5 10.0028 10.5ZM10.0028 10.5V13M10.0028 1.5C12.3386 3.56658 15.3872 4.64257 18.5028 4.5C18.9564 6.04302 19.0951 7.66147 18.9109 9.25918C18.7266 10.8569 18.2231 12.4013 17.4302 13.8005C16.6373 15.1998 15.5712 16.4254 14.2952 17.4045C13.0193 18.3836 11.5596 19.0962 10.0028 19.5C8.44598 19.0962 6.98624 18.3836 5.71031 17.4045C4.43437 16.4254 3.36827 15.1998 2.57536 13.8005C1.78245 12.4013 1.2789 10.8569 1.09464 9.25918C0.910381 7.66147 1.04917 6.04302 1.50276 4.5C4.61829 4.64257 7.66693 3.56658 10.0028 1.5Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+                Сменить пароль
+            </a>
+            <a href="#"
+               class="flex items-end gap-2 text-center font-medium py-7 px-6 rounded-b-lg w-full hover:bg-[#011120] hover:text-white">
+                <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
+                     width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.9"
+                          d="M12 5.5V3.5C12 2.96957 11.7893 2.46086 11.4142 2.08579C11.0391 1.71071 10.5304 1.5 10 1.5H3C2.46957 1.5 1.96086 1.71071 1.58579 2.08579C1.21071 2.46086 1 2.96957 1 3.5V15.5C1 16.0304 1.21071 16.5391 1.58579 16.9142C1.96086 17.2893 2.46957 17.5 3 17.5H10C10.5304 17.5 11.0391 17.2893 11.4142 16.9142C11.7893 16.5391 12 16.0304 12 15.5V13.5M7 9.5H19M19 9.5L16 6.5M19 9.5L16 12.5"
+                          stroke="#A3AEBD" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Выйти из аккаунта
+            </a>
+        </div>
+        <div class="basis-4/5">
+            {% block account_content %}
+            {% endblock %}
         </div>
     </div>
 {% endblock %}
 
 {% block script %}
-    <script>
-        const order_status_colors = {
-            "processing": "#FF6915",
-            "completed": "#11A342",
-            "cancelled": "#F81D2A",
-            "pending_payment": "#F81D2A",
-            "in_transit": '#3b82f6',
-        }
-
-        function accountController() {
-            return {
-                firstname: '',
-
-                account_switcher: 'orders',
-
-                orders_data: null,
-
-                orders_pagination_range: [],
-
-                async init() {
-                    await this.getFirstName()
-                    await this.fetchOrdersData()
-                },
-
-                async getFirstName() {
-                    const response = await api('/api/v1/auth/user/firstname/', {
-                        'method': 'GET',
-                    })
-
-                    const data = await response.json()
-
-                    this.firstname = data.firstname
-                },
-
-                // orders
-
-                async fetchOrdersData({url = '/api/v1/orders/me', page = null} = {}) {
-                    if (page) {
-                        url += `/?page=${page}`
-                    }
-                    
-                    const response = await fetch(url, {
-                        'method': 'GET',
-                    })
-
-                    const data = await response.json()
-
-                    for (const order of data.results) {
-                        order['color'] = order_status_colors[order['status']]
-                    }
-
-                    this.orders_data = data
-
-                    console.log(data)
-                },
-
-                async getNextOrders() {
-                    if (!this.orders_data && !this.orders_data.next) {
-                        return
-                    }
-                    
-                    await this.fetchOrdersData({url: this.orders_data.next})
-                },
-                
-                async getPrevOrders() {
-                    if (!this.orders_data && !this.orders_data.previous) {
-                        return
-                    }
-                    
-                    await this.fetchOrdersData({url: this.orders_data.previous})
-                },
-                
-                async getOrdersByPage(page) {
-                  if (this.orders_data.current_page == page || page == '...') {
-                      return
-                  }  
-                  
-                  await this.fetchOrdersData({page: page})
-                },
-
-                get pagination_range() {
-                    const current = this.orders_data.current_page;
-                    const total = this.orders_data.max_page;
-                    const delta = 2;
-                    const range = [];
-                    const left = Math.max(1, current - delta);
-                    const right = Math.min(total, current + delta);
-
-                    if (left > 2) {
-                        range.push(1);
-                        range.push("...");
-                    } else {
-                        for (let i = 1; i < left; i++) {
-                            range.push(i);
-                        }
-                    }
-
-                    for (let i = left; i <= right; i++) {
-                        range.push(i);
-                    }
-
-                    if (right < total - 1) {
-                        range.push("...");
-                        range.push(total);
-                    } else {
-                        for (let i = right + 1; i <= total; i++) {
-                            range.push(i);
-                        }
-                    }
-
-                    console.log(range)
-
-                    return range;
-                },
-
-                // logout
-
-                async logout() {
-                    const response = await api('/api/v1/auth/logout', {
-                        'method': 'POST',
-                    })
-
-                    const data = await response.json()
-
-                    console.log(data)
-
-                    if (data.success) {
-                        window.location.href = '/'
-                    }
-                }
-            }
-        }
-    </script>
+    {% block account_script %}
+    {% endblock %}
 {% endblock %}

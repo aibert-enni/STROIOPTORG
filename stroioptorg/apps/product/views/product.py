@@ -1,4 +1,4 @@
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import ListAPIView
 
@@ -51,3 +51,6 @@ class ProductSearchListAPIView(ListAPIView):
         categories = ProductService.get_categories_from_products(self.get_queryset())
         response.data['categories'] = CategorySerializer(categories, many=True).data
         return response
+
+class ProductSearchTemplateAPIView(TemplateView):
+    template_name = 'product/search_products.html'

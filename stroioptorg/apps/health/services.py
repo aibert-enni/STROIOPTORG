@@ -2,7 +2,7 @@ import logging
 
 from django.db import connection
 
-from health.utils import get_redis, get_elasticsearch
+from apps.health.utils import get_redis, get_elasticsearch
 
 logger = logging.getLogger(__name__)
 

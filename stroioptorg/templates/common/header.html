@@ -84,10 +84,6 @@
                     <p id="user-profile-text" class="text-[#6B7076] hidden md:block">Войти</p>
                 </button>
             </div>
-            <a href="#" class="flex flex-col items-center"><img class="w-[13px]"
-                                                                src="{% static 'images/chart-icon.svg' %}"
-                                                                alt="Иконка для сравнения"/>
-                <p class="text-[#6B7076] hidden md:block">Сравнение</p></a>
             <a href="#" class="flex flex-col items-center"><img class="w-[17px]"
                                                                 src="{% static 'images/heart-icon.svg' %}"
                                                                 alt="Иконка для избранных"/>
@@ -110,13 +106,13 @@
 
                 Каталог
             </button>
-            <form class="flex rounded-lg w-full 2xl:w-[722px] bg-primary">
+            <div class="flex rounded-lg w-full 2xl:w-[722px] bg-primary">
                 <input id="search-input" role="searchbox"
                        class="w-full h-full border-[3px] focus:outline-0 pl-4 border-primary rounded-lg" type="text"
                        placeholder="Найти среди 50000 товаров. Например: Дрель Bosch">
-                <button class="px-[21px]"><img src="{% static 'images/search-icon.svg' %}"
+                <button id="search-btn" class="px-[21px]"><img src="{% static 'images/search-icon.svg' %}"
                                                alt="Иконка для кнопки поиска"/></button>
-            </form>
+            </div>
         </div>
     </nav>
     <div class="divider"></div>

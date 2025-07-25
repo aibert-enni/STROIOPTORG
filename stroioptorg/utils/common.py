@@ -57,7 +57,7 @@ def get_objects_by_user_or_session_key(request: Request, model_type: Type[T], au
     :return: List of Model instances or None
     """
 
-    if request.user.is_authenticated:
+    if request.user:
         if auth_fields:
             auth_params = {f'{field}__user': request.user for field in auth_fields}
         else:

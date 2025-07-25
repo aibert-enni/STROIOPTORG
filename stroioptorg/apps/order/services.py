@@ -11,9 +11,8 @@ from rest_framework.request import Request
 from stripe import Refund
 
 from apps.order.models import Order, PaymentStatus, PaymentMethod, OrderItem, OrderStatus
-from apps.product.models import Cart, CartProduct, Product
+from apps.product.models import Cart, CartProduct, Product, ShopAddress
 from apps.product.services import CartService
-from product.models import ShopAddress
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -213,7 +212,7 @@ class OrderService:
 
     @staticmethod
     def get_orders_by_user(request: Request) -> QuerySet[Order]:
-        orders = Order.objects.filter(user=request.user)
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
         return orders
 
     @staticmethod

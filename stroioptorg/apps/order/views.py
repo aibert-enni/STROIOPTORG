@@ -26,7 +26,7 @@ class OrderGetAPIView(APIView):
         return Response({'order': serializer.data})
 
 class OrderListAPIView(ListAPIView):
-    serializer_class = OrderSerializer
+    serializer_class = OrderResponseSerializer
     pagination_class = OrderPagination
     permission_classes = (IsAuthenticated,)
 

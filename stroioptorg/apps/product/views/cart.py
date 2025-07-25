@@ -1,5 +1,5 @@
 from django.db.models import Prefetch
-from django.views.generic import ListView
+from django.views.generic import TemplateView
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -12,15 +12,8 @@ from apps.product.serializers import CartSerializer, CartProductSerializer, Upda
 from apps.product.services import CartProductService, CartService
 
 
-class CartView(ListView):
+class CartTemplateView(TemplateView):
     template_name = 'product/cart.html'
-    context_object_name = 'cart_products'
-
-    def get_queryset(self):
-        if not self.request.session.session_key:
-            self.request.session.create()
-        return CartProductService.get_cart_products(self.request)
-
 
 class CartAPIView(APIView):
     permission_classes = (IsAuthenticated,)

@@ -7,7 +7,7 @@ from apps.product.models import Product
 
 
 autocomplete_analyzer = analyzer('autocomplete_analyzer',
-            tokenizer=tokenizer('trigram', 'ngram', min_gram=2, max_gram=20),
+            tokenizer=tokenizer('trigram', 'ngram', min_gram=2, max_gram=10),
             filter=['lowercase']
         )
 

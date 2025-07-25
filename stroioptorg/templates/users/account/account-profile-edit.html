@@ -1,0 +1,147 @@
+{% extends 'users/account/account.html' %}
+{% load static %}
+
+{% block account_content %}
+    <div x-data="profileController">
+        <h3 class="h3 mb-6">Изменить профиль</h3>
+        <template x-if="profile_data">
+            <form class="flex flex-col border rounded-lg p-10 *:rounded-lg  w-full" @submit.prevent="submit">
+                <template x-if="errors">
+                    <div class="p-5 rounded-lg border-dashed border border-[#E52B0E] bg-[#FFF9F9] text-[#E52B0E]">
+                        <template x-for="(messages, field) in errors" :key="field">
+                            <template x-for="msg in messages" :key="msg">
+                                <p x-text="msg"></p>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+                <label for="email" class="pb-2.5">Email:</label>
+                <input id="email" type="text" x-model="email"
+                       placeholder="Введите ваш email"
+                       :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.email ? 'border-[#E52B0E]' : ''}`" required>
+                <label for="firstname" class="pb-2.5">Имя:</label>
+                <input id="firstname" type="text" x-model="firstname"
+                       placeholder="Введите ваш имя"
+                       :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.firstname ? 'border-[#E52B0E]' : ''}`" required>
+                <label for="lastname" class="pb-2.5">Фамилия:</label>
+                <input id="lastname" type="text" x-model="lastname"
+                       placeholder="Введите ваш фамилия"
+                       :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.lastname ? 'border-[#E52B0E]' : ''}`" required>
+                <label for="phone_number" class="pb-2.5">Номер телефона:</label>
+                <input id="phone_number" type="tel" autocomplete="phone_number" x-model="phone_number"
+                       placeholder="+7 (___) ___-__-__"
+                       :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.phone_number ? 'border-[#E52B0E]' : ''}`"
+                       required>
+                <label for="region" class="pb-2.5">Регион:</label>
+                <select id="region"
+                        x-model="region_id"
+                        :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.region ? 'border-[#E52B0E]' : ''}`">
+                    <option value="" :selected="region_id == null">Нету в списке</option>
+                    <template x-for="region in regions">
+                        <option :value="region.id" x-text="region.name" :selected="region_id == region.id"></option>
+                    </template>
+                </select>
+                <button type="submit"
+                        class="bg-[#186FD4] h-[61px] uppercase font-bold text-[13px] text-white px-4 py-2 mt-4">
+                    Сохранить изменения
+                </button>
+            </form>
+        </template>
+    </div>
+{% endblock %}
+
+{% block account_script %}
+    <script src="https://unpkg.com/inputmask@5.0.8/dist/inputmask.min.js"></script>
+    <script>
+        Inputmask({mask: "+7 (999) 999-99-99"}).mask("#phone_number");
+    </script>
+    <script>
+        function profileController() {
+            return {
+                profile_data: null,
+                email: '',
+                firstname: '',
+                lastname: '',
+                phone_number: '',
+                region_id: '',
+                regions: [],
+                errors: null,
+
+                async init() {
+                    await this.fetchProfile();
+                    await this.fetchRegions();
+                },
+
+                async submit() {
+                    if (this.profile_data && this.profile_data.email == this.email && this.profile_data.firstname == this.firstname && this.profile_data.lastname == this.lastname && this.profile_data.phone_number == this.phone_number && this.profile_data.region == this.region_id) {
+                        return
+                    }
+
+                    try {
+                        const response = await api('/api/v1/auth/user/profile/', {
+                            'method': 'PUT',
+                            'headers': {
+                                'Content-Type': 'application/json',
+                            },
+                            'body': JSON.stringify({
+                                'email': this.email,
+                                'firstname': this.firstname,
+                                'lastname': this.lastname,
+                                'phone_number': this.phone_number,
+                                'region': this.region_id,
+                            })
+                        })
+
+                        if (!response.ok) {
+                            // Пример: 401 Unauthorized, 500 Internal Server Error и т.д.
+                            const errorData = await response.json();
+                            console.error('Ошибка от API:', errorData);
+                            // Можно показать ошибку пользователю:
+                            delete errorData.status_code;
+                            this.errors = errorData;
+                            return;
+                        } else {
+                            this.errors = null;
+                        }
+
+                        const data = await response.json();
+
+                        console.log(data);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                },
+
+                async fetchProfile() {
+                    const response = await api('/api/v1/auth/user/profile/', {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    this.email = data.email
+                    this.firstname = data.firstname
+                    this.lastname = data.lastname
+                    this.phone_number = data.phone_number
+                    this.region_id = data.region
+
+                    this.profile_data = data;
+                },
+
+                async fetchRegions() {
+                    const response = await api('/api/v1/auth/address/regions/', {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    this.regions = data
+                }
+            }
+        }
+    </script>
+{% endblock %}

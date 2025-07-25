@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status as status_codes
 
-from health.services import ServiceHealthChecker
+from apps.health.services import ServiceHealthChecker
 
 
 # Create your views here.

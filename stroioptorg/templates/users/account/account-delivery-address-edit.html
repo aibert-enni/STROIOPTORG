@@ -1,0 +1,209 @@
+{% extends 'users/account/account.html' %}
+{% load static %}
+
+{% block account_content %}
+    <div x-data="deliveryAddressController">
+        <h3 class="h3 mb-6">Редактировать адрес</h3>
+        <form class="flex flex-col border rounded-lg p-10  w-max" @submit.prevent="submit">
+            <template x-if="errors">
+                <div class="p-5 rounded-lg border-dashed border border-[#E52B0E] bg-[#FFF9F9] text-[#E52B0E]">
+                    <template x-for="(messages, field) in errors" :key="field">
+                        <template x-for="msg in messages" :key="msg">
+                            <p x-text="msg"></p>
+                        </template>
+                    </template>
+                </div>
+            </template>
+            <div class="flex gap-6 *:w-full">
+                <div>
+                    <label for="firstname" class="pb-2.5">Имя <span class="text-[#E52B0E]">*</span>:</label>
+                    <input class="rounded-lg" id="firstname" type="text" x-model="firstname"
+                           placeholder="Введите ваш имя"
+                           :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.firstname ? 'border-[#E52B0E]' : ''}`"
+                           required>
+                </div>
+                <div>
+                    <label for="lastname" class="pb-2.5">Фамилия <span class="text-[#E52B0E]">*</span>:</label>
+                    <input class="rounded-lg" id="lastname" type="text" x-model="lastname"
+                           placeholder="Введите ваш фамилия"
+                           :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.lastname ? 'border-[#E52B0E]' : ''}`"
+                           required>
+                </div>
+            </div>
+            <div>
+                <label for="company" class="pb-2.5">Название компании:</label>
+                <input class="rounded-lg" id="company" type="text" x-model="company"
+                       placeholder="Введите название вашей компании"
+                       :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.company ? 'border-[#E52B0E]' : ''}`"
+                >
+            </div>
+            <div class="flex gap-6 *:w-full">
+                <div>
+                    <label for="region" class="pb-2.5">Область \ Регион <span class="text-[#E52B0E]">*</span>:</label>
+                    <select id="region"
+                            x-model="region_id"
+                            :class="`w-full border rounded-lg py-6 px-5 ${errors && errors.region ? 'border-[#E52B0E]' : ''}`"
+                            required>
+                        <option value="" disabled :selected="region_id == null">Выберите Область \ Регион:</option>
+                        <template x-for="region in regions">
+                            <option :value="region.id" x-text="region.name"
+                                    :selected="region_id == region.id"></option>
+                        </template>
+                    </select>
+                </div>
+                <div>
+                    <label for="lastname" class="pb-2.5">Город <span class="text-[#E52B0E]">*</span>:</label>
+                    <select
+                            class="w-full border rounded-lg py-6 px-5"
+                            id="city"
+                            x-model="city_id"
+                            :disabled="!filteredCities.length"
+                            required
+                    >
+                        <option value="" disabled :selected="city_id == null">Выберите город:</option>
+                        <template x-for="city in filteredCities" :key="city.id">
+                            <option :value="city.id" x-text="city.name" :selected="city_id == city.id"></option>
+                        </template>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-6 *:w-full">
+                <div>
+                    <label for="street" class="pb-2.5">Улица <span class="text-[#E52B0E]">*</span>:</label>
+                    <input class="rounded-lg" id="street" type="text" x-model="street"
+                           placeholder="Введите улицу"
+                           :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.street ? 'border-[#E52B0E]' : ''}`"
+                           required>
+                </div>
+                <div>
+                    <label for="house_number" class="pb-2.5">Квартира:</label>
+                    <input class="rounded-lg" id="house_number" type="text" x-model="house_number"
+                           placeholder="Номер квартиры"
+                           :class="`block h-[61px] mb-2 w-full border px-3 py-2 ${errors && errors.street ? 'border-[#E52B0E]' : ''}`"
+                    >
+                </div>
+            </div>
+            <button type="submit"
+                    class="bg-[#186FD4] w-fit h-[61px] rounded-lg uppercase font-bold text-[13px] text-white px-8 py-6 mt-4">
+                Сохранить изменения
+            </button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block account_script %}
+    <script>
+        function deliveryAddressController() {
+            return {
+                firstname: '',
+                lastname: '',
+                company: '',
+                street: '',
+                house_number: '',
+                region_id: null,
+                city_id: null,
+                regions: [],
+                cities: [],
+                address_data: {},
+                errors: null,
+
+                get filteredCities() {
+                    if (!this.region_id) return [];
+                    const cities = this.cities.filter(r => r.region_id === Number(this.region_id));
+                    return cities;
+                },
+
+                async init() {
+                    await this.fetchRegions()
+                    await this.fetchCities()
+                    await this.fetchAddress()
+                },
+
+                async submit() {
+                    if (this.firstname == this.address_data.firstname && this.lastname == this.address_data.lastname && this.company == this.address_data.company && this.region_id == this.address_data.region && this.city_id == this.address_data.city && this.street == this.address_data.street && this.house_number == this.address_data.house_number) {
+                        return;
+                    }
+
+                    try {
+                        const response = await api(`/api/v1/auth/user/address/me/`, {
+                            'method': 'PUT',
+                            'headers': {
+                                'Content-Type': 'application/json',
+                            },
+                            'body': JSON.stringify({
+                                'firstname': this.firstname,
+                                'lastname': this.lastname,
+                                'company': this.company,
+                                'street': this.street,
+                                'house_number': this.house_number,
+                                'city': this.city_id
+                            })
+                        })
+
+                        if (!response.ok) {
+                            // Пример: 401 Unauthorized, 500 Internal Server Error и т.д.
+                            const errorData = await response.json();
+                            console.error('Ошибка от API:', errorData);
+                            // Можно показать ошибку пользователю:
+                            delete errorData.status_code;
+                            this.errors = errorData;
+                            return;
+                        } else {
+                            this.errors = null;
+                        }
+
+                        const data = await response.json();
+
+                        console.log(data);
+                        window.location.href = '/account/delivery-address/';
+                    } catch (error) {
+                        console.error(error);
+                    }
+                },
+
+                async fetchAddress() {
+                    const response = await api(`/api/v1/auth/user/address/me/`, {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json();
+
+                    this.firstname = data.firstname
+                    this.lastname = data.lastname
+                    this.company = data.company
+                    this.region_id = data.region
+                    this.city_id = data.city
+                    this.house_number = data.house_number
+                    this.phone_number = data.phone_number
+                    this.street = data.street
+
+                    console.log(data);
+                },
+
+                async fetchRegions() {
+                    const response = await api('/api/v1/auth/address/regions/', {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    this.regions = data
+                },
+
+                async fetchCities() {
+                    const response = await api('/api/v1/auth/address/cities/', {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    this.cities = data
+                }
+            }
+        }
+    </script>
+{% endblock %}

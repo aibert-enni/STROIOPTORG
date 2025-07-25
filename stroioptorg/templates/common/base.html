@@ -57,6 +57,7 @@
     const catalog_url = api_url + 'catalog/tree';
 
     const search_input = document.querySelector('#search-input');
+    const search_btn = document.querySelector('#search-btn');
 
     const blue_bg = document.querySelector('#blue-bg');
 
@@ -66,7 +67,11 @@
 
     burger()
     catalog()
-
+    
+    search_btn.addEventListener('click', () => {
+        window.location.href = `/products/search/?search=${search_input.value}`;
+    })
+    
     function burger() {
         const burger_btn = document.querySelector('#burger-btn');
         const burger_menu = document.querySelector('#burger-menu');

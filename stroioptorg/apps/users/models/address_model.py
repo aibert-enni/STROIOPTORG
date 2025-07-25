@@ -1,7 +1,8 @@
 from django.db import models
 
 from apps.main.models import TimeStampedModel
-from apps.users.models import User
+from utils.validators import firstname_validator, lastname_validator
+
 
 class Country(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='Название страны')
@@ -15,7 +16,7 @@ class Country(models.Model):
 
 class Region(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название региона')
-    country = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='regions')
+    country = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='regions', verbose_name='Страна')
 
     def __str__(self):
         return f'{self.country} -> {self.name}'
@@ -27,7 +28,7 @@ class Region(models.Model):
 
 class City(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название города')
-    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='cities')
+    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='cities', verbose_name='Регион')
 
     def __str__(self):
         return f'{self.region} -> {self.name}'
@@ -38,13 +39,16 @@ class City(models.Model):
         verbose_name_plural = 'Города'
 
 class Address(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', null=True)
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE, related_name='address', verbose_name='Пользователь')
 
-    city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='addresses')
-    street = models.CharField(max_length=255, null=True, blank=True)
-    house_number = models.CharField(max_length=20, null=True, blank=True)
-    postal_code = models.CharField(max_length=100, null=True,  blank=True,)
-    additional_info = models.TextField(null=True, blank=True)
+    firstname = models.CharField(max_length=100, validators=[firstname_validator], verbose_name='Имя')
+    lastname = models.CharField(max_length=100, validators=[lastname_validator], verbose_name='Фамилия')
+
+    company = models.CharField(max_length=100, verbose_name='Название компании', blank=True, null=True)
+
+    city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='addresses', verbose_name='Город')
+    street = models.CharField(max_length=255, verbose_name='Улица')
+    house_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Номер квартиры')
 
     @property
     def region(self):

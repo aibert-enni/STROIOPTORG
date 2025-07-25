@@ -3,7 +3,9 @@ from django.urls import path
 
 from apps.users.views import RegisterView, LoginView
 from apps.users.views.email import PasswordResetTemplateView, PasswordResetConfirmView
-from users.views.account import AccountTemplateView
+from apps.users.views.account import AccountMyAccountTemplateView, AccountOrdersTemplateView, AccountOrderTemplateView, \
+    AccountProfileEditTemplateView, AccountDeliveryAddressTemplateView, AccountDeliveryAddressEditTemplateView, \
+    AccountDeliveryAddressCreateTemplateView, AccountPasswordChangeTemplateView
 
 app_name = 'users'
 
@@ -13,7 +15,14 @@ urlpatterns = [
     path('auth/login', LoginView.as_view(), name='login'),
 
     # account
-    path('account/', AccountTemplateView.as_view(), name='account'),
+    path('account/', AccountMyAccountTemplateView.as_view(), name='account'),
+    path('account/orders/', AccountOrdersTemplateView.as_view(), name='orders'),
+    path('account/orders/<int:pk>/', AccountOrderTemplateView.as_view(), name='order'),
+    path('account/profile/edit/', AccountProfileEditTemplateView.as_view(), name='profile-edit'),
+    path('account/delivery-address/', AccountDeliveryAddressTemplateView.as_view(), name='delivery-address'),
+    path('account/delivery-address/edit/', AccountDeliveryAddressEditTemplateView.as_view(), name='delivery-address-edit'),
+    path('account/delivery-address/create/', AccountDeliveryAddressCreateTemplateView.as_view(), name='delivery-address-create'),
+    path('account/password-change/', AccountPasswordChangeTemplateView.as_view(), name='password-change'),
 
     # reset password
     path('password_reset/', PasswordResetTemplateView.as_view(), name='password_reset'),

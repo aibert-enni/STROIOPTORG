@@ -9,7 +9,38 @@ from apps.review.serializers import ReviewCreateSerializer, ReviewSerializer, Re
 from apps.review.services import ReviewService
 
 
-class ReviewGetAPIView(APIView):
+class ReviewCreateUpdateAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    @extend_schema(
+        request=ReviewCreateSerializer,
+        responses=ReviewCreateSerializer,
+    )
+    def post(self, request):
+        request_serializer = ReviewCreateSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        review = ReviewService(request).create_review(**request_serializer.validated_data)
+        response_serializer = ReviewSerializer(review)
+
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        request=ReviewUpdateSerializer
+    )
+    def put(self, request, *args, **kwargs):
+        request_serializer = ReviewUpdateSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        review = ReviewService(request).update_review(**request_serializer.validated_data)
+
+        response_serializer = ReviewSerializer(review)
+
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+
+class ReviewGetDeleteAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     extend_schema(
@@ -19,6 +50,11 @@ class ReviewGetAPIView(APIView):
         review = ReviewService.get_review(pk)
         response_serializer = ReviewSerializer(review)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        ReviewService.delete_review(pk)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ReviewListByMeAPIView(ListAPIView):
     serializer_class = ReviewSerializer
@@ -36,46 +72,6 @@ class ReviewListByUserIdAPIView(ListAPIView):
         pk = self.kwargs.get('pk')
         reviews = ReviewService.get_reviews_by_user_id(pk)
         return reviews
-
-class ReviewCreateAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    @extend_schema(
-        request=ReviewCreateSerializer,
-        responses=ReviewCreateSerializer,
-    )
-    def post(self, request):
-        request_serializer = ReviewCreateSerializer(data=request.data)
-        request_serializer.is_valid(raise_exception=True)
-
-        review = ReviewService(request).create_review(**request_serializer.validated_data)
-        response_serializer = ReviewSerializer(review)
-
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-
-class ReviewUpdateAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    @extend_schema(
-        request=ReviewUpdateSerializer
-    )
-    def put(self, request, *args, **kwargs):
-        request_serializer = ReviewUpdateSerializer(data=request.data)
-        request_serializer.is_valid(raise_exception=True)
-
-        review = ReviewService(request).update_review(**request_serializer.validated_data)
-
-        response_serializer = ReviewSerializer(review)
-
-        return Response(response_serializer.data, status=status.HTTP_200_OK)
-
-class ReviewDeleteAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def delete(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        ReviewService.delete_review(pk)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ReviewListByProductAPIView(ListAPIView):
     serializer_class = ReviewSerializer
