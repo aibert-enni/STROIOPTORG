@@ -1,0 +1,315 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1 class="h1 mb-7">Личный кабинет</h1>
+    <div class="flex" x-data="accountController()">
+        <div class="w-full">
+            <p class="h3 mb-6">Здравствуйте, <span class="capitalize" x-text="firstname"></span>!</p>
+            <div id="account-switcher" class="w-full h-[199px] mb-6">
+                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
+                       id="my-orders-label">
+                    <input x-model="account_switcher" type="radio" name="account-section" value="orders" class="hidden">
+                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
+                        <div class="flex justify-center items-center h-[54px] w-[70px]">
+                            <svg width="40" height="36" viewBox="0 0 40 36" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.1111 3.11111H39M22.1111 11.5556H32.6667M22.1111 24.2222H39M22.1111 32.6667H32.6667M1 3.11111C1 2.55121 1.22242 2.01424 1.61833 1.61833C2.01424 1.22242 2.55121 1 3.11111 1H11.5556C12.1155 1 12.6524 1.22242 13.0483 1.61833C13.4442 2.01424 13.6667 2.55121 13.6667 3.11111V11.5556C13.6667 12.1155 13.4442 12.6524 13.0483 13.0483C12.6524 13.4442 12.1155 13.6667 11.5556 13.6667H3.11111C2.55121 13.6667 2.01424 13.4442 1.61833 13.0483C1.22242 12.6524 1 12.1155 1 11.5556V3.11111ZM1 24.2222C1 23.6623 1.22242 23.1254 1.61833 22.7294C2.01424 22.3335 2.55121 22.1111 3.11111 22.1111H11.5556C12.1155 22.1111 12.6524 22.3335 13.0483 22.7294C13.4442 23.1254 13.6667 23.6623 13.6667 24.2222V32.6667C13.6667 33.2266 13.4442 33.7635 13.0483 34.1595C12.6524 34.5554 12.1155 34.7778 11.5556 34.7778H3.11111C2.55121 34.7778 2.01424 34.5554 1.61833 34.1595C1.22242 33.7635 1 33.2266 1 32.6667V24.2222Z"
+                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <p class="">Мои заказы</p>
+                    </div>
+                </label>
+                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
+                       id="my-orders-label">
+                    <input x-model="account_switcher" type="radio" name="account-section" value="profile"
+                           class="hidden">
+                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
+                        <div class="flex justify-center items-center h-[54px] w-[70px]">
+                            <svg width="41" height="48" viewBox="0 0 41 48" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.75 43.75V39C1.75 36.4804 2.75057 34.0641 4.5316 32.2825C6.31262 30.5009 8.72822 29.5 11.247 29.5H19.5568M6.49848 10.5C6.49848 13.0196 7.49905 15.4359 9.28008 17.2175C11.0611 18.9991 13.4767 20 15.9955 20C18.5142 20 20.9298 18.9991 22.7108 17.2175C24.4919 15.4359 25.4924 13.0196 25.4924 10.5C25.4924 7.98044 24.4919 5.56408 22.7108 3.78249C20.9298 2.00089 18.5142 1 15.9955 1C13.4767 1 11.0611 2.00089 9.28008 3.78249C7.49905 5.56408 6.49848 7.98044 6.49848 10.5ZM31.2381 30.9487C31.7011 30.4856 32.2508 30.1182 32.8557 29.8675C33.4607 29.6169 34.109 29.4879 34.7638 29.4879C35.4186 29.4879 36.067 29.6169 36.672 29.8675C37.2769 30.1182 37.8266 30.4856 38.2896 30.9487C38.7526 31.4119 39.1199 31.9618 39.3704 32.5669C39.621 33.172 39.75 33.8206 39.75 34.4756C39.75 35.1306 39.621 35.7792 39.3704 36.3844C39.1199 36.9895 38.7526 37.5393 38.2896 38.0025L30.2409 46.125H23.1182V39L31.2381 30.9487Z"
+                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <p class="nowrap">Изменить профиль</p>
+                    </div>
+                </label>
+                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer "
+                       id="my-orders-label">
+                    <input x-model="account_switcher" type="radio" name="account-section" value="delivery-address"
+                           class="hidden ">
+                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
+                        <div class="flex justify-center items-center h-[54px] w-[70px]">
+                            <svg width="41" height="40" viewBox="0 0 41 40" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19.9181 31L15.9845 23L2.21702 16C2.02872 15.9123 1.86915 15.7714 1.75728 15.5941C1.64541 15.4168 1.58594 15.2106 1.58594 15C1.58594 14.7894 1.64541 14.5832 1.75728 14.4059C1.86915 14.2286 2.02872 14.0877 2.21702 14L37.6192 1L31.9135 17.068M33.6856 31V31.02M37.8571 35.242C38.6825 34.403 39.2446 33.3339 39.4724 32.1699C39.7002 31.006 39.5835 29.7995 39.137 28.703C38.6904 27.6066 37.9342 26.6694 36.9638 26.01C35.9935 25.3507 34.8526 24.9987 33.6856 24.9987C32.5185 24.9987 31.3777 25.3507 30.4073 26.01C29.437 26.6694 28.6807 27.6066 28.2342 28.703C27.7877 29.7995 27.6709 31.006 27.8987 32.1699C28.1265 33.3339 28.6887 34.403 29.514 35.242C30.3361 36.08 31.7267 37.332 33.6856 39C35.7527 37.22 37.1452 35.968 37.8571 35.242Z"
+                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <p class="">Адрес доставки</p>
+                    </div>
+                </label>
+                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
+                       id="my-orders-label">
+                    <input x-model="account_switcher" type="radio" name="account-section" value="wishlist"
+                           class="hidden">
+                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
+                        <div class="flex justify-center items-center h-[54px] w-[70px]">
+                            <svg width="41" height="36" viewBox="0 0 41 36" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M36.4836 3.93013C35.5546 3.00118 34.453 2.2643 33.2386 1.76154C32.0261 1.25876 30.7263 1 29.4119 1C28.0994 1 26.7978 1.25876 25.5853 1.76154C24.3709 2.2643 23.2693 3.00118 22.3403 3.93013L20.4133 5.85711L18.4865 3.93013C16.611 2.05462 14.0674 1.00096 11.4149 1.00096C8.76258 1.00096 6.21879 2.05462 4.34326 3.93013C2.46773 5.80566 1.41406 8.34945 1.41406 11.0018C1.41406 13.6541 2.46773 16.1979 4.34326 18.0734L6.27023 20.0004L20.4133 34.1437L34.5566 20.0004L36.4836 18.0734C37.4125 17.1448 38.1488 16.0425 38.6523 14.8292C39.1559 13.6157 39.4141 12.3152 39.4141 11.0018C39.4141 9.68834 39.1559 8.38781 38.6523 7.17436C38.1488 5.96109 37.4125 4.85872 36.4836 3.93013Z"
+                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <p class="">Избранное</p>
+                    </div>
+                </label>
+                <label class="flex flex-col justify-center items-center gap-4 cursor-pointer"
+                       id="my-orders-label">
+                    <input x-model="account_switcher" type="radio" name="account-section" value="password"
+                           class="hidden">
+                    <div class="flex flex-col justify-center items-center gap-4 py-4 rounded">
+                        <div class="flex justify-center items-center h-[54px] w-[70px]">
+                            <svg width="41" height="40" viewBox="0 0 41 40" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.25 20.0272C19.6893 20.0272 19.1516 19.8045 18.7551 19.408C18.3586 19.0115 18.1359 18.4738 18.1359 17.9131C18.1359 17.3524 18.3586 16.8146 18.7551 16.4181C19.1516 16.0217 19.6893 15.7989 20.25 15.7989C20.8107 15.7989 21.3484 16.0217 21.7449 16.4181C22.1414 16.8146 22.3641 17.3524 22.3641 17.9131C22.3641 18.4738 22.1414 19.0115 21.7449 19.408C21.3484 19.8045 20.8107 20.0272 20.25 20.0272ZM20.25 20.0272V25.3125M20.25 1C25.1883 5.36901 31.6335 7.6438 38.2201 7.3424C39.1791 10.6045 39.4725 14.0262 39.083 17.4039C38.6934 20.7817 37.6288 24.0467 35.9525 27.005C34.2762 29.9632 32.0223 32.5542 29.3248 34.6242C26.6273 36.6941 23.5413 38.2007 20.25 39.0544C16.9587 38.2007 13.8727 36.6941 11.1752 34.6242C8.47769 32.5542 6.22381 29.9632 4.54749 27.005C2.87116 24.0467 1.80659 20.7817 1.41705 17.4039C1.0275 14.0262 1.32092 10.6045 2.27988 7.3424C8.86651 7.6438 15.3117 5.36901 20.25 1Z"
+                                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+
+                        </div>
+                        <p class="">Сменить пароль</p>
+                    </div>
+                </label>
+                <div @click="logout()" id="logout"
+                     class="flex flex-col justify-center items-center gap-4 cursor-pointer">
+                    <div class="flex justify-center items-center h-[54px] w-[70px]">
+                        <svg width="40" height="36" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24.3082 9.44444V5.22222C24.3082 4.10242 23.8633 3.02848 23.0715 2.23666C22.2797 1.44484 21.2057 1 20.0859 1H5.30816C4.18836 1 3.11442 1.44484 2.3226 2.23666C1.53078 3.02848 1.08594 4.10242 1.08594 5.22222V30.5556C1.08594 31.6754 1.53078 32.7493 2.3226 33.5411C3.11442 34.3329 4.18836 34.7778 5.30816 34.7778H20.0859C21.2057 34.7778 22.2797 34.3329 23.0715 33.5411C23.8633 32.7493 24.3082 31.6754 24.3082 30.5556V26.3333M13.7526 17.8889H39.0859M39.0859 17.8889L32.7526 11.5556M39.0859 17.8889L32.7526 24.2222"
+                                  stroke="#2C333D" stroke-width="1.8" stroke-linecap="round"
+                                  stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
+                    <p>Выйти</p>
+                </div>
+            </div>
+            <div id="account-content">
+                <template x-if="account_switcher === 'orders' && orders_data">
+                    <div>
+                        <p class="h3 mb-6">Текущие заказы</p>
+                        <table class="cart-table">
+                            <thead>
+                            <tr class="border-b">
+                                <th class="text-left text-[#45484A] text-sm font-bold uppercase pl-5">Номер</th>
+                                <th class="text-left text-[#45484A] text-sm font-bold uppercase">Дата</th>
+                                <th class="text-left text-[#45484A] text-sm font-bold uppercase">Статус</th>
+                                <th class="text-left text-[#45484A] text-sm font-bold uppercase pr-5">Итого</th>
+                            </tr>
+                            </thead>
+                            <tbody class="font-normal">
+                            <template x-for="order in orders_data.results" :key="order.id">
+                                <tr class="border" :id="order.id">
+                                    <td class="pr-5">
+                                        <p x-text="'#' + order.id"></p>
+                                    </td>
+                                    <td class="pr-5">
+                                        <p x-text="order.created_at"></p>
+                                    </td>
+                                    <td class="pr-5">
+                                        <div :style="`border-color: ${order.color}`"
+                                             class="flex w-fit border rounded-lg items-center gap-2 py-1 px-2">
+                                            <p :style="`color: ${order.color}`">&bull;</p>
+                                            <p class="uppercase font-medium text-sm" :style="`color: ${order.color}`"
+                                               x-text="order.status_label"></p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="flex w-full justify-between items-center">
+                                            <p class="text-[#003B73] text-xl whitespace-nowrap"><span
+                                                    x-text="order.total_price"></span> ₽</p>
+                                            <div class="bg-[#F6F8FB] ml-4 rounded-lg h-12 w-12 flex justify-center items-center">
+                                                <a href="#" class="text-[#186FD4] rounded-lg">
+                                                    >
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            </tbody>
+                        </table>
+                        <div class="flex mt-6 gap-2.5">
+                            <button @click="getPrevOrders()" id="orders_prev_btn" :disabled="orders_data.previous == null"
+                                    class="py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white">
+                                <svg width="23" height="10" viewBox="0 0 23 10" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.540381 4.54038C0.28654 4.79422 0.28654 5.20578 0.540381 5.45962L4.67696 9.59619C4.9308 9.85003 5.34235 9.85003 5.59619 9.59619C5.85003 9.34235 5.85003 8.9308 5.59619 8.67696L1.91924 5L5.59619 1.32304C5.85003 1.0692 5.85003 0.657647 5.59619 0.403806C5.34235 0.149965 4.9308 0.149965 4.67696 0.403806L0.540381 4.54038ZM23 5V4.35L1 4.35V5V5.65L23 5.65V5Z"
+                                          fill="currentColor"></path>
+                                </svg>
+                                <p>Назад</p>
+                            </button>
+                            <template x-for="pagination in pagination_range">
+                                <button @click="getOrdersByPage(pagination)" x-text="pagination"
+                                        :class="pagination == orders_data.current_page
+                                        ? 'py-5 px-6 border rounded-lg flex justify-center items-center gap-2.5 cursor-pointer bg-black text-white'
+                                        : 'py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white'">
+                                </button>
+                            </template>
+                            <button @click="getNextOrders()" id="orders_next_btn" :disabled="orders_data.next == null"
+                                    class="py-5 px-6 border rounded-lg border-[#DFDFDF] flex justify-center items-center gap-2.5 cursor-pointer hover:bg-black hover:text-white">
+                                <p>Далее</p>
+                                <svg class="rotate-180" width="23" height="10" viewBox="0 0 23 10" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.540381 4.54038C0.28654 4.79422 0.28654 5.20578 0.540381 5.45962L4.67696 9.59619C4.9308 9.85003 5.34235 9.85003 5.59619 9.59619C5.85003 9.34235 5.85003 8.9308 5.59619 8.67696L1.91924 5L5.59619 1.32304C5.85003 1.0692 5.85003 0.657647 5.59619 0.403806C5.34235 0.149965 4.9308 0.149965 4.67696 0.403806L0.540381 4.54038ZM23 5V4.35L1 4.35V5V5.65L23 5.65V5Z"
+                                          fill="currentColor"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const order_status_colors = {
+            "processing": "#FF6915",
+            "completed": "#11A342",
+            "cancelled": "#F81D2A",
+            "pending_payment": "#F81D2A",
+            "in_transit": '#3b82f6',
+        }
+
+        function accountController() {
+            return {
+                firstname: '',
+
+                account_switcher: 'orders',
+
+                orders_data: null,
+
+                orders_pagination_range: [],
+
+                async init() {
+                    await this.getFirstName()
+                    await this.fetchOrdersData()
+                },
+
+                async getFirstName() {
+                    const response = await api('/api/v1/auth/user/firstname/', {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    this.firstname = data.firstname
+                },
+
+                // orders
+
+                async fetchOrdersData({url = '/api/v1/orders/me', page = null} = {}) {
+                    if (page) {
+                        url += `/?page=${page}`
+                    }
+                    
+                    const response = await fetch(url, {
+                        'method': 'GET',
+                    })
+
+                    const data = await response.json()
+
+                    for (const order of data.results) {
+                        order['color'] = order_status_colors[order['status']]
+                    }
+
+                    this.orders_data = data
+
+                    console.log(data)
+                },
+
+                async getNextOrders() {
+                    if (!this.orders_data && !this.orders_data.next) {
+                        return
+                    }
+                    
+                    await this.fetchOrdersData({url: this.orders_data.next})
+                },
+                
+                async getPrevOrders() {
+                    if (!this.orders_data && !this.orders_data.previous) {
+                        return
+                    }
+                    
+                    await this.fetchOrdersData({url: this.orders_data.previous})
+                },
+                
+                async getOrdersByPage(page) {
+                  if (this.orders_data.current_page == page || page == '...') {
+                      return
+                  }  
+                  
+                  await this.fetchOrdersData({page: page})
+                },
+
+                get pagination_range() {
+                    const current = this.orders_data.current_page;
+                    const total = this.orders_data.max_page;
+                    const delta = 2;
+                    const range = [];
+                    const left = Math.max(1, current - delta);
+                    const right = Math.min(total, current + delta);
+
+                    if (left > 2) {
+                        range.push(1);
+                        range.push("...");
+                    } else {
+                        for (let i = 1; i < left; i++) {
+                            range.push(i);
+                        }
+                    }
+
+                    for (let i = left; i <= right; i++) {
+                        range.push(i);
+                    }
+
+                    if (right < total - 1) {
+                        range.push("...");
+                        range.push(total);
+                    } else {
+                        for (let i = right + 1; i <= total; i++) {
+                            range.push(i);
+                        }
+                    }
+
+                    console.log(range)
+
+                    return range;
+                },
+
+                // logout
+
+                async logout() {
+                    const response = await api('/api/v1/auth/logout', {
+                        'method': 'POST',
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    if (data.success) {
+                        window.location.href = '/'
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
