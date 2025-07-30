@@ -1,0 +1,34 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div x-data="confirmEmailController">
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function confirmEmailController() {
+            return {
+                async init() {
+                    await this.fetchEmail()
+                },
+
+                async fetchEmail() {
+                    const paths = window.location.pathname.split('/');
+
+                    const key = paths[paths.length - 1];
+
+                    const response = await fetch('/api/v1/auth/registration/account-confirm-email/' + key, {
+                        method: 'GET'
+                    })
+
+                    const data = await response.json()
+
+                    console.log(data)
+                }
+            }
+        }
+    </script>
+{% endblock %}

@@ -52,7 +52,7 @@
                 </svg>
                 Адрес доставки
             </a>
-            <a href="#"
+            <a href="{% url 'wishlist:wishlist_list' %}"
                class="group flex items-end gap-2 text-center font-medium py-7 px-6 border-b w-full hover:bg-[#011120] hover:text-white {% if account_page == 'wishlist' %} bg-[#011120] text-white border-b-0{% endif %}">
                 <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
                      width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,7 +74,7 @@
                 </svg>
                 Сменить пароль
             </a>
-            <a href="#"
+            <button onclick="logout()"
                class="flex items-end gap-2 text-center font-medium py-7 px-6 rounded-b-lg w-full hover:bg-[#011120] hover:text-white">
                 <svg class="{% if account_page == 'orders' %}text-white {% else %} text-[#A3AEBD] {% endif %} group-hover:text-white"
                      width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +83,7 @@
                           stroke="#A3AEBD" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 Выйти из аккаунта
-            </a>
+            </button>
         </div>
         <div class="basis-4/5">
             {% block account_content %}
@@ -93,6 +93,21 @@
 {% endblock %}
 
 {% block script %}
+    <script>
+        async function logout() {
+            const response = await api('/api/v1/auth/logout', {
+                'method': 'POST',
+            })
+
+            const data = await response.json()
+
+            console.log(data)
+
+            if (response.ok) {
+                window.location.href = '/'
+            }
+        }
+    </script>
     {% block account_script %}
     {% endblock %}
 {% endblock %}

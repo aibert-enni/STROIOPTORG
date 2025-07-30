@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include, re_path, reverse
 
-from apps.users.views.auth_view import GoogleLogin, GoogleLoginCallback
+from apps.users.views.auth import GoogleLogin, GoogleLoginCallback
 from apps.users.views.email import CustomConfirmEmailAPIView
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('', include('apps.users.urls', namespace='users')),
     path('', include('apps.product.urls', namespace='product')),
     path('', include('apps.order.urls', namespace='order')),
+    path('', include('apps.wishlist.urls', namespace='wishlist')),
 
     # auth
     path('api/v1/auth/', include('apps.users.api-urls')),
@@ -34,7 +35,7 @@ urlpatterns = [
     path('api/v1/', include('apps.product.api_urls', namespace='api-product')),
     path('api/v1/', include('apps.order.api_urls', namespace='api-order')),
     path('api/v1/', include('apps.wishlist.api_urls', namespace='api-wishlist')),
-    path('api/v1/', include('apps.review.api_urls', namespace='api-review')),
+    # path('api/v1/', include('apps.review.api_urls', namespace='api-review')),
     path('api/v1/', include('apps.health.api_urls', namespace='api-health')),
 ]
 

@@ -81,8 +81,8 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            this.products = data.products;
-                            this.total = data.total_amount;
+                            this.products = data.data.products;
+                            this.total = data.data.total_amount;
                             console.log(data);
                             this.$nextTick(() => {
                                 initEvents()
@@ -131,13 +131,12 @@
 
         async function UpdateProductCart(cart_product_id, quantity) {
             try {
-                const response = await fetch('http://localhost:8000{% url "api-product:cart-update-product" %}', {
+                const response = await api('/api/v1/cart/product/' + cart_product_id, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ // Use 'body' instead of 'data'
-                        cart_product_id: cart_product_id,
+                    body: JSON.stringify({ // Use 'body' instead of 'data
                         quantity: quantity,
                     }),
                 });
@@ -155,10 +154,11 @@
 
         async function DeleteProductCart(cart_product_id) {
             try {
-                const response = await fetch(`http://localhost:8000/api/v1/cart/remove/${cart_product_id}`, {
+                const response = await api('/api/v1/cart/product/' + cart_product_id, {
                     method: 'DELETE',
                 });
                 if (response.ok) {
+                    
                     return true;
                 }
             } catch (error) {

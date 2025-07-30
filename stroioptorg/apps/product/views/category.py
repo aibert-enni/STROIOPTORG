@@ -1,19 +1,19 @@
-from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from silk.profiling.profiler import silk_profile
 
 from apps.product.models import Category, Product
-from apps.product.pagination import ProductListPagination
-from apps.product.serializers import ProductSerializer, ProductListQuerySerializer
+from apps.product.serializers import ProductSerializer, ProductListQuerySerializer, \
+    CategoryTreeSuccessResponseSerializer
 from apps.product.services import ProductByCategoryListService
 from apps.product.utils import get_nested_categories, get_filter
 from utils.cache import safe_cache_get, safe_cache_set
+from utils.pagination import BasePagination
 
 
 def get_categories(request):
@@ -21,6 +21,7 @@ def get_categories(request):
     # Получаем дерево категории каталога
     nested_categories = get_nested_categories(categories)
     return JsonResponse(nested_categories, safe=False)
+
 
 class ProductsByCategoryView(ListView):
     model = Product
@@ -35,7 +36,7 @@ class ProductsByCategoryView(ListView):
 
         self.category = category
 
-        products = ProductByCategoryListService(category).get_products()
+        products = ProductByCategoryListService(category).get_products(user=self.request.user)
 
         self.products = products
 
@@ -67,6 +68,50 @@ class ProductsByCategoryView(ListView):
 
 class CategoryTreeAPIView(APIView):
 
+    @extend_schema(
+        operation_id='get category tree',
+        summary='Получить древо категории',
+        description='Получаем иерархию категории',
+        responses={
+            200: CategoryTreeSuccessResponseSerializer
+        },
+        examples=[
+            OpenApiExample(
+                'Пример ответа',
+                summary='Пример ответа',
+                description='Пример ответа',
+                value=[
+                    {
+                        "id": 1,
+                        "name": "Инструмент",
+                        "url": "instrument",
+                        "children": [
+                            {
+                                "id": 2,
+                                "name": "Электроинструмент",
+                                "url": "elektroinstrument",
+                                "children": [
+                                    {
+                                        "id": 3,
+                                        "name": "Дрели, шуруповерты и гайковерты",
+                                        "url": "dreli-shurupoverty-i-gajkoverty",
+                                        "children": []
+                                    },
+                                    {
+                                        "id": 4,
+                                        "name": "Перфоратор",
+                                        "url": "perforator",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                response_only=True
+            )
+        ]
+    )
     def get(self, request):
         nested_categories = safe_cache_get("nested_categories")
 
@@ -80,12 +125,15 @@ class CategoryTreeAPIView(APIView):
 
 
 @extend_schema(
+    operation_id='get catalog',
+    tags=['catalog'],
+    summary='Получаем каталог товаров',
+    description='Получаем каталог товаров по slug с фильтрами, еще можно делать фильтр с помощью атрибутов товара',
     parameters=[ProductListQuerySerializer],
-    description='Получаем каталог товаров по slug с фильтрами, еще можно делать фильтр с помощью атрибутов товара'
 )
 class ProductByCategoryListAPIView(ListAPIView):
     serializer_class = ProductSerializer
-    pagination_class = ProductListPagination
+    pagination_class = BasePagination
 
     @silk_profile()
     def get_queryset(self):
@@ -100,7 +148,8 @@ class ProductByCategoryListAPIView(ListAPIView):
 
         category = get_object_or_404(Category, slug=category_slug)
 
-        products = ProductByCategoryListService(category).get_products(price_from, price_to, order, self.request.query_params)
+        products = ProductByCategoryListService(category).get_products(price_from, price_to, order,
+                                                                       self.request.query_params,
+                                                                       user=self.request.user)
 
         return products
-

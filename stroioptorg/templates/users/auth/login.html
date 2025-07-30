@@ -6,11 +6,22 @@
     <div class="flex justify-between items-center xl:max-w-[1368px] mb-24  rounded-lg border p-10">
         <div class="w-full" x-data="loginForm()">
             <form class="flex flex-col *:rounded-lg  max-w-md" @submit.prevent="submit">
+                <template x-if="errors">
+                    <div class="p-5 rounded-lg border-dashed border border-[#E52B0E] bg-[#FFF9F9] text-[#E52B0E]">
+                        <template x-for="(messages, field) in errors" :key="field">
+                            <template x-for="msg in messages" :key="msg">
+                                <p x-text="msg"></p>
+                            </template>
+                        </template>
+                    </div>
+                </template>
                 <label for="email" class="pb-2.5">Email:</label>
                 <input type="text" x-model="email" placeholder="Введите почту"
+                       :style="errors && errors.email ? 'border-color: #E52B0E;' : ''"
                        class="block h-[61px] mb-2 w-full border px-3 py-2">
                 <label for="password" class="pb-2.5">Пароль:</label>
                 <input type="password" x-model="password" placeholder="Введите пароль"
+                       :style="errors && errors.password ? 'border-color: #E52B0E;' : ''"
                        class="block h-[61px] mb-2 w-full border px-3 py-2">
                 <a class="h-[61px] mt-4 flex items-center justify-center bg-[#F6F8FB] text-[#117FE3] font-medium"
                    href="{% url 'users:password_reset' %}">Восстановить пароль</a>
@@ -18,12 +29,11 @@
                         class="bg-[#186FD4] h-[61px] uppercase font-bold text-[13px] text-white px-4 py-2 mt-4">
                     Авторизоваться
                 </button>
-                <a class="h-[61px] mt-4 flex items-center justify-center border font-medium" href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={{ google_callback_uri }}&prompt=consent&response_type=code&client_id={{ google_client_id }}&scope=openid%20email%20profile&access_type=offline">
+                <a class="h-[61px] mt-4 flex items-center justify-center border font-medium"
+                   href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={{ google_callback_uri }}&prompt=consent&response_type=code&client_id={{ google_client_id }}&scope=openid%20email%20profile&access_type=offline">
                     Авторизоваться через google
                 </a>
             </form>
-
-            <p x-text="error" class="text-red-600 mt-2"></p>
         </div>
         <div class="flex items-start border-l border-[#EAEAEA] pl-12 ml-10">
             <img class="mr-7" src="{% static 'images/vector.svg' %}"/>
@@ -53,9 +63,8 @@
             return {
                 email: '',
                 password: '',
-                error: '',
+                errors: null,
                 async submit() {
-                    this.error = ''
                     try {
                         const response = await fetch('/api/v1/auth/login/', {
                             method: 'POST',
@@ -67,13 +76,20 @@
                         const data = await response.json();
                         console.log(data)
 
-                        if (!response.ok) {
-                            this.error = data.detail || 'Ошибка входа';
+                        if (response.status !== 200) {
+                            // Пример: 401 Unauthorized, 500 Internal Server Error и т.д.
+                            const errorData = data
+                            console.error('Ошибка от API:', errorData.error.details);
+                            // Можно показать ошибку пользователю:
+                            this.errors = errorData.error.details;
                             return;
+                        } else {
+                            this.errors = null;
                         }
                         window.location.href = '/'; // редирект после входа
                     } catch (e) {
-                        this.error = 'Ошибка сети. Попробуйте позже.';
+                        this.errors = {'error': 'Ошибка сети. Попробуйте позже.'};
+                        console.error(e);
                     }
                 }
             }

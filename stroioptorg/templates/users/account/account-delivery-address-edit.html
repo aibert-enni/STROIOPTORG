@@ -168,14 +168,14 @@
 
                     const data = await response.json();
 
-                    this.firstname = data.firstname
-                    this.lastname = data.lastname
-                    this.company = data.company
-                    this.region_id = data.region
-                    this.city_id = data.city
-                    this.house_number = data.house_number
-                    this.phone_number = data.phone_number
-                    this.street = data.street
+                    this.firstname = data.data.firstname
+                    this.lastname = data.data.lastname
+                    this.company = data.data.company
+                    this.region_id = data.data.region
+                    this.city_id = data.data.city
+                    this.house_number = data.data.house_number
+                    this.phone_number = data.data.phone_number
+                    this.street = data.data.street
 
                     console.log(data);
                 },
@@ -189,7 +189,7 @@
 
                     console.log(data)
 
-                    this.regions = data
+                    this.regions = data.data
                 },
 
                 async fetchCities() {
@@ -201,7 +201,7 @@
 
                     console.log(data)
 
-                    this.cities = data
+                    this.cities = data.data
                 }
             }
         }

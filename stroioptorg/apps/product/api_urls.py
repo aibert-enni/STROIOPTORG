@@ -1,7 +1,8 @@
 from django.urls import path
 
-from apps.product.views import CartAPIView, CartAddProductAPIView, CartUpdateProductAPIView, CartRemoveProductAPIView, \
+from apps.product.views import CartAPIView, \
     ProductByCategoryListAPIView, CategoryTreeAPIView, ShopAddressesAPIView
+from apps.product.views.cart import CartProductAPIView
 from apps.product.views.product import ProductSearchListAPIView
 
 app_name = 'api-product'
@@ -9,9 +10,7 @@ app_name = 'api-product'
 urlpatterns = [
     # cart api
     path('cart/', CartAPIView.as_view(), name='cart'),
-    path('cart/add/', CartAddProductAPIView.as_view(), name='cart-add-product'),
-    path('cart/update/', CartUpdateProductAPIView.as_view(), name='cart-update-product'),
-    path('cart/remove/<int:pk>', CartRemoveProductAPIView.as_view(), name='cart-remove-product'),
+    path('cart/product/<int:pk>', CartProductAPIView.as_view(), name='cart-product'),
 
     # catalog api
     path('catalog/tree/', CategoryTreeAPIView.as_view(), name='category-tree'),

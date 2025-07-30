@@ -1,4 +1,4 @@
- {% extends 'common/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
 {% block content %}
@@ -115,10 +115,16 @@
                                    href="{% url 'product:catalog-product' product.slug %}"><img
                                         src="{% static 'images/white-cart.svg' %}" alt="Иконка корзины"> Купить</a>
                                 <div class="flex items-center gap-[9px] h-full">
-                                    <button style="border-color: #F3F4F5;"
-                                            class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
-                                            class="h-[14px] w-[17px]" src="{% static 'images/heart-icon.svg' %}"
-                                            alt="Иконка для добавления в избранные"></button>
+                                    <button onclick="{% if product.wishlist.all %} removeFromWishlist({{ product.id }}, this) {% else %} addToWishlist({{ product.id }}, this) {% endif %}"
+                                            style="border-color: #F3F4F5;"
+                                            class="rounded h-full border px-[11px] border-[#F3F4F5]">
+                                        <svg {% if product.wishlist.all %} style="color: #186FD4; fill: #186FD4;" {% endif %} width="17" height="14" viewBox="0 0 26 23" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M13 6.5C13 6.5 14.4034 1.5 18.8475 1.5C22.3092 1.5 24.5 4.3666 24.5 7.7626C24.5 12.4594 19.9359 15.5694 13 21.5C6.06418 15.5694 1.5 12.4594 1.5 7.7626C1.5 4.3666 3.69085 1.5 7.15254 1.5C11.5966 1.5 13 6.5 13 6.5Z"
+                                                  stroke="currentColor" stroke-width="1.6" stroke-miterlimit="10"
+                                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
                                     <button style="border-color: #F3F4F5;"
                                             class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
                                             class="h-[18px] w-[14px]" src="{% static 'images/chart-icon.svg' %}"
@@ -131,14 +137,14 @@
                 <div class="flex gap-2.5">
                     <div class="flex gap-2.5 w-full justify-center">
                         <div id="pagination-prev-btn"
-                            class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
                             Назад
                         </div>
                         <div id="pages-container" class="flex gap-2.5">
-                            
+
                         </div>
                         <div id="pagination-next-btn"
-                            class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
                             Вперед
                         </div>
                     </div>
@@ -150,19 +156,20 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'js/wishlist.js' %}"></script>
     <script>
         let products;
 
         let order_value;
-        
+
         let paginate = 9;
 
         let page = 1;
 
         let total_count = {{ total_products|safe }};
-        
+
         let total_pages = calculateTotalPages(total_count);
-        
+
         const pages_container = document.querySelector('#pages-container');
 
         const total_count_element = document.querySelector("#total-count");
@@ -194,9 +201,9 @@
 
         const pagination_prev_btn = document.querySelector('#pagination-prev-btn');
         const pagination_next_btn = document.querySelector('#pagination-next-btn');
-        
+
         render_pages();
-        
+
         initParams();
 
         // Применяем фильтры
@@ -274,6 +281,8 @@
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
+                    console.log(data);
+                    data = data.data
                     products_container.empty();
                     products = data.results;
                     total_pages = calculateTotalPages(data.count);
@@ -309,8 +318,10 @@
                                         <img src="/static/images/white-cart.svg" alt="Иконка корзины"> Купить
                                     </a>
                                     <div class="flex items-center gap-[9px] h-full">
-                                        <button style="border-color: #F3F4F5;" class="rounded h-full border px-[11px] border-[#F3F4F5]">
-                                            <img class="h-[14px] w-[17px]" src="/static/images/heart-icon.svg" alt="Избранное">
+                                        <button onclick="${product.wishlist ? `removeFromWishlist(${product.id}, this))` : `addToWishlist(${product.id}, this)}`}" style="border-color: #F3F4F5;" class="rounded h-full border px-[11px] border-[#F3F4F5]">
+                                            <svg ${product.wishlist ? 'style="color: #186FD4; fill: #186FD4;"' : ''} width="14" height="17" viewBox="0 0 26 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M13 6.5C13 6.5 14.4034 1.5 18.8475 1.5C22.3092 1.5 24.5 4.3666 24.5 7.7626C24.5 12.4594 19.9359 15.5694 13 21.5C6.06418 15.5694 1.5 12.4594 1.5 7.7626C1.5 4.3666 3.69085 1.5 7.15254 1.5C11.5966 1.5 13 6.5 13 6.5Z" stroke="currentColor" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
                                         </button>
                                         <button style="border-color: #F3F4F5;" class="rounded h-full border px-[11px] border-[#F3F4F5]">
                                             <img class="h-[18px] w-[14px]" src="/static/images/chart-icon.svg" alt="Сравнение">
@@ -353,15 +364,15 @@
                 });
             });
         }
-        
+
         // Рендерит кнопки пагинации
         function render_pages() {
             pages_container.innerHTML = "";
-            
+
             let start_page = 1;
-            
+
             let pages_to_render;
-            
+
             if (total_pages < 7) {
                 pages_to_render = total_pages + 1;
             } else {
@@ -372,14 +383,14 @@
                     start_page = 1
                     pages_to_render = start_page + 5;
                 } else {
-                    start_page = page - 2 ;
+                    start_page = page - 2;
                     pages_to_render = start_page + 4;
                 }
             }
-            
+
             if (page > 3) {
                 const first_page = document.createElement('div');
-                first_page.classList.add("rounded", "py-[20px]", "px-[24px]", "hover:text-white", "hover:bg-black",  "border", "border-[#DFDFDF]", "cursor-pointer");
+                first_page.classList.add("rounded", "py-[20px]", "px-[24px]", "hover:text-white", "hover:bg-black", "border", "border-[#DFDFDF]", "cursor-pointer");
                 first_page.innerText = 1;
                 first_page.addEventListener('click', () => {
                     page = 1;
@@ -387,7 +398,7 @@
                 })
                 pages_container.appendChild(first_page);
             }
-            
+
             for (let i = start_page; i < pages_to_render; i++) {
                 const page_element = document.createElement('div');
                 page_element.classList.add("rounded", "py-[20px]", "px-[24px]");
@@ -397,21 +408,21 @@
                     pages_container.appendChild(page_element);
                     continue;
                 } else {
-                    page_element.classList.add("hover:text-white", "hover:bg-black",  "border", "border-[#DFDFDF]", "cursor-pointer");
+                    page_element.classList.add("hover:text-white", "hover:bg-black", "border", "border-[#DFDFDF]", "cursor-pointer");
                 }
                 page_element.addEventListener('click', function () {
-                   page = i;
-                   fetchCatalog()
+                    page = i;
+                    fetchCatalog()
                 });
                 pages_container.appendChild(page_element);
             }
             if (page + 2 < total_pages && total_pages > 6) {
                 const last_page = document.createElement('div');
-                last_page.classList.add("rounded", "py-[20px]", "px-[24px]", "hover:text-white", "hover:bg-black",  "border", "border-[#DFDFDF]", "cursor-pointer");
+                last_page.classList.add("rounded", "py-[20px]", "px-[24px]", "hover:text-white", "hover:bg-black", "border", "border-[#DFDFDF]", "cursor-pointer");
                 last_page.innerText = total_pages;
                 last_page.addEventListener('click', () => {
-                  page = total_pages;
-                  fetchCatalog();
+                    page = total_pages;
+                    fetchCatalog();
                 })
                 pages_container.appendChild(last_page);
             }
@@ -420,7 +431,7 @@
         function isPositiveInteger(value) {
             return /^\d+$/.test(value);
         }
-        
+
         function calculateTotalPages(total_count) {
             let total_pages = Math.trunc(total_count / paginate);
             if (total_count % paginate > 0) {

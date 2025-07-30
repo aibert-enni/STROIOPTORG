@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import get_object_or_404
 
-from apps.order.models import PaymentStatus, Order, OrderStatus
+from apps.order.models import PaymentStatus, Order, OrderStatus, DeliveryMethod
 
 
 @csrf_exempt
@@ -26,11 +26,14 @@ def stripe_webhook(request):
     if session_id:
         try:
             order = get_object_or_404(Order, stripe_payment_id=session_id)
-            order.user.cart.get().products.all().delete()
-
             if event['type'] == 'checkout.session.completed':
                 order.payment_status = PaymentStatus.SUCCESS
-                order.status = OrderStatus.PROCESSING
+                if order.delivery_method == DeliveryMethod.COURIER:
+                    order.status = OrderStatus.IN_TRANSIT
+                elif order.delivery_method == OrderStatus.IN_SHOP:
+                    order.status = OrderStatus.IN_SHOP
+                else:
+                    order.status = OrderStatus.PROCESSING
             else:
                 order.payment_status = PaymentStatus.FAILED
                 order.status = OrderStatus.CANCELLED

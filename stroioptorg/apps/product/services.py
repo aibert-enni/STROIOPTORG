@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import ExpressionWrapper, F, IntegerField, Q, Manager, QuerySet, Prefetch
+from django.db.models import ExpressionWrapper, F, IntegerField, Q, Manager, QuerySet, Prefetch, Count
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -7,7 +7,8 @@ from elasticsearch_dsl import Q as dsl_Q
 
 from apps.product.documents import ProductDocument
 from apps.product.models import Product, Cart, CartProduct, Category
-from utils.common import get_object_by_user_or_session_key, get_objects_by_user_or_session_key
+from apps.wishlist.models import WishlistProduct
+from utils.common import get_objects_by_user_or_session_key
 
 
 class CartService:
@@ -15,16 +16,9 @@ class CartService:
         self.request = request
 
     def get_cart(self) -> Cart:
-        cart = Cart.objects.prefetch_related(
+        cart, _ = Cart.objects.prefetch_related(
             Prefetch('products', queryset=CartProduct.objects.select_related('product__cover'))
-        )
-
-        if self.request.user.is_authenticated:
-            cart, _ = cart.get_or_create(user=self.request.user)
-        else:
-            if not self.request.session.session_key:
-                self.request.session.create()
-            cart, _ = cart.get_or_create(session_key=self.request.session.session_key)
+        ).get_or_create(user=self.request.user)
 
         return cart
 
@@ -37,16 +31,10 @@ class CartProductService:
         with transaction.atomic():
             product = get_object_or_404(Product, id=product_id)
 
-            # Check stock
             if product.stock_quantity < quantity:
-                raise serializers.ValidationError('В складе количество меньше')
+                raise serializers.ValidationError('В складе количество продукта не хватает для добавления')
 
-            if self.request.user.is_authenticated:
-                cart, _ = Cart.objects.get_or_create(user=self.request.user)
-            else:
-                if not self.request.session.session_key:
-                    self.request.session.create()
-                cart, _ = Cart.objects.get_or_create(session_key=self.request.session.session_key)
+            cart, _ = Cart.objects.get_or_create(user=self.request.user)
 
             cart_product, created = CartProduct.objects.get_or_create(
                 cart=cart,
@@ -82,17 +70,19 @@ class CartProductService:
 
     def delete(self, cart_product_id):
         with transaction.atomic():
-            cart_product = self.get_cart_product(self.request, cart_product_id)
+            cart_product = self.get_cart_product(cart_product_id)
+            cart_product.product.stock_quantity += cart_product.quantity
             cart_product.delete()
 
-    @staticmethod
-    def get_cart_product(request, cart_product_id):
-        return get_object_by_user_or_session_key(request, CartProduct, get_by_auth=True, auth_fields=['cart'],
-                                                 pk=cart_product_id)
+    def get_cart_product(self, cart_product_id):
+        return get_object_or_404(
+            CartProduct.objects.select_related('product'),
+            id=cart_product_id,
+            cart__user=self.request.user
+        )
 
     @staticmethod
     def get_cart_products(request):
-        print(request.user)
         return get_objects_by_user_or_session_key(request, CartProduct, get_by_auth=True, auth_fields=['cart'])
 
 
@@ -113,7 +103,7 @@ class ProductByCategoryListService:
 
         return category_filter
 
-    def get_products(self, price_from=None, price_to=None, order='price', query_params=None) -> Manager:
+    def get_products(self, price_from=None, price_to=None, order='price', query_params=None, user=None) -> Manager:
         products = Product.objects
 
         # Basic filter for products search in current category
@@ -147,7 +137,13 @@ class ProductByCategoryListService:
                 product_filter &= Q(product_attributes__attribute_value__in=ids)
 
         # Applying the category filter
-        products = products.select_related('cover').filter(
+        products = products.select_related('cover').prefetch_related(
+            Prefetch(
+                'wishlist',
+                queryset=WishlistProduct.objects.filter(user=user),
+                to_attr='wishlist_for_user'
+            )
+        ).filter(
             product_filter)
 
         products = products.distinct().only('id', 'cover', 'name', 'slug', 'sku', 'discount', 'description',
@@ -208,4 +204,4 @@ class ProductService:
 
     @staticmethod
     def get_categories_from_products(products: QuerySet[Product]) -> QuerySet[Category]:
-        return Category.objects.filter(products__in=products).distinct()
+        return Category.objects.filter(products__in=products).annotate(products_count=Count('products')).distinct()

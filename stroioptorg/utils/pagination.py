@@ -1,7 +1,7 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-class ProductListPagination(PageNumberPagination):
+class BasePagination(PageNumberPagination):
     page_size = 9
     page_size_query_param = 'paginate_by'
     max_page_size = 24

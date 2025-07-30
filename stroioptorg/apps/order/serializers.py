@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.order.models import DeliveryMethod, PaymentMethod, Order, OrderItem, OrderStatus
 from utils.common import format_russian_date
+from utils.serializers import SuccessResponseSerializer
 
 from utils.validators import phone_number_validator, firstname_validator, lastname_validator
 
@@ -20,7 +21,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = '__all__'
 
-class OrderResponseSerializer(serializers.ModelSerializer):
+class OrderDataSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     status_label = serializers.SerializerMethodField()
 
@@ -45,6 +46,9 @@ class OrderResponseSerializer(serializers.ModelSerializer):
         data['delivery_method'] = DeliveryMethod(data['delivery_method']).label
 
         return data
+
+class OrderGetSuccessResponseSerializer(SuccessResponseSerializer):
+    data = OrderDataSerializer()
 
 class CreateOrderSerializer(serializers.Serializer):
     delivery_method = serializers.ChoiceField(choices=DeliveryMethod.choices)
@@ -92,14 +96,36 @@ class CreateOrderSerializer(serializers.Serializer):
 
         return data
 
+class CreateOrderDataSerializer(serializers.Serializer):
+    checkout_url = serializers.CharField(required=False)
+    order_id = serializers.IntegerField()
+
+class CreateOrderSuccessResponseSerializer(SuccessResponseSerializer):
+    data = CreateOrderDataSerializer()
+
+class RetryOrderDataSerializer(serializers.Serializer):
+    checkout_url =serializers.CharField()
+
+class RetryOrderSuccessResponseSerializer(SuccessResponseSerializer):
+    data = RetryOrderDataSerializer()
+
 class OrderRefreshPaymentSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
 
 class OrderCalculateDeliveryCostSerializer(serializers.Serializer):
     address = serializers.CharField()
 
+class OrderCalculateDeliveryCostDataSerializer(serializers.Serializer):
+    delivery_cost = serializers.IntegerField()
+
+class OrderCalculateDeliveryCostSuccessResponseSerializer(SuccessResponseSerializer):
+    data = OrderCalculateDeliveryCostDataSerializer()
+
 class OrderDeclineSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
 
 class OrderConfirmSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
+
+class OrderSuccessSuccessResponseSerializer(SuccessResponseSerializer):
+    data = OrderSerializer()

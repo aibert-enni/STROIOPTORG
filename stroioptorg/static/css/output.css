@@ -617,6 +617,10 @@ input[type="number"] {
         font-size: 20px;
         font-weight: 500;
     }
+.h4 {
+        font-size: 18px;
+        font-weight: 500;
+    }
 table.cart-table {
         width: 100%;
         border-collapse: separate;
@@ -896,14 +900,14 @@ table.cart-table tr:last-child td:last-child {
 .h-\[14px\] {
   height: 14px;
 }
+.h-\[150px\] {
+  height: 150px;
+}
 .h-\[16px\] {
   height: 16px;
 }
 .h-\[18px\] {
   height: 18px;
-}
-.h-\[199px\] {
-  height: 199px;
 }
 .h-\[1px\] {
   height: 1px;
@@ -947,9 +951,6 @@ table.cart-table tr:last-child td:last-child {
 }
 .h-full {
   height: 100%;
-}
-.h-\[150px\] {
-  height: 150px;
 }
 .max-h-0 {
   max-height: 0px;
@@ -1082,6 +1083,9 @@ table.cart-table tr:last-child td:last-child {
 }
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.grid-cols-\[minmax\(250px\2c _20vw\)_1fr\] {
+  grid-template-columns: minmax(250px, 20vw) 1fr;
 }
 .flex-col {
   flex-direction: column;
@@ -1719,6 +1723,10 @@ table.cart-table tr:last-child td:last-child {
   --tw-text-opacity: 1;
   color: rgb(100 100 100 / var(--tw-text-opacity, 1));
 }
+.text-\[\#686868\] {
+  --tw-text-opacity: 1;
+  color: rgb(104 104 104 / var(--tw-text-opacity, 1));
+}
 .text-\[\#696D70\] {
   --tw-text-opacity: 1;
   color: rgb(105 109 112 / var(--tw-text-opacity, 1));
@@ -1843,6 +1851,10 @@ table.cart-table tr:last-child td:last-child {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+body{
+    color: #414446;
+}
+
 @media (min-width: 768px) {
 
   .md\:container {
@@ -1907,11 +1919,6 @@ table.cart-table tr:last-child td:last-child {
   border-radius: 0.5rem;
 }
 
-.\*\:bg-\[\#186FD4\] > * {
-  --tw-bg-opacity: 1;
-  background-color: rgb(24 111 212 / var(--tw-bg-opacity, 1));
-}
-
 .\*\:px-\[25px\] > * {
   padding-left: 25px;
   padding-right: 25px;
@@ -1944,11 +1951,6 @@ table.cart-table tr:last-child td:last-child {
   color: rgb(64 66 68 / var(--tw-text-opacity, 1));
 }
 
-.\*\:text-white > * {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
 .\*\:opacity-20 > * {
   opacity: 0.2;
 }
@@ -1970,6 +1972,16 @@ table.cart-table tr:last-child td:last-child {
   background-color: rgb(1 17 32 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-\[\#186FD4\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(24 111 212 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-\[\#EE0906\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(238 9 6 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-\[\#F6F8FB\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(246 248 251 / var(--tw-bg-opacity, 1));
@@ -1983,11 +1995,6 @@ table.cart-table tr:last-child td:last-child {
 .hover\:bg-gray-200:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-\[\#186FD4\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(24 111 212 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-\[\#186FD4\]:hover {

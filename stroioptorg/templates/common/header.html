@@ -73,9 +73,6 @@
         <a href="{% url 'main:home' %}"><img class="w-[159px] h-full" src="{% static 'images/logo.svg' %}"
                                              alt="Логотип сайта stroioptorg"></a>
         <div class="flex justify-between items-center gap-[23px] md:gap-[27px] *:hover:*:text-black">
-            <a href="#" class="md:flex flex-col items-center  hidden"><img src="{% static 'images/gift-icon.svg' %}"
-                                                                           alt="Иконка для акции"/>
-                <p class="text-[#6B7076] hidden md:block">Все акции</p></a>
             <div id="user-profile">
                 <button id="user-profile-btn" class="flex flex-col items-center hover:*:text-black">
                     <img class="w-[19px]"
@@ -84,7 +81,7 @@
                     <p id="user-profile-text" class="text-[#6B7076] hidden md:block">Войти</p>
                 </button>
             </div>
-            <a href="#" class="flex flex-col items-center"><img class="w-[17px]"
+            <a href="{% url 'wishlist:wishlist_list' %}" class="flex flex-col items-center"><img class="w-[17px]"
                                                                 src="{% static 'images/heart-icon.svg' %}"
                                                                 alt="Иконка для избранных"/>
                 <p class="text-[#6B7076] hidden md:block">Избранное</p></a>
@@ -106,13 +103,13 @@
 
                 Каталог
             </button>
-            <div class="flex rounded-lg w-full 2xl:w-[722px] bg-primary">
+            <form id="search-form" class="flex rounded-lg w-full 2xl:w-[722px] bg-primary">
                 <input id="search-input" role="searchbox"
                        class="w-full h-full border-[3px] focus:outline-0 pl-4 border-primary rounded-lg" type="text"
                        placeholder="Найти среди 50000 товаров. Например: Дрель Bosch">
                 <button id="search-btn" class="px-[21px]"><img src="{% static 'images/search-icon.svg' %}"
                                                alt="Иконка для кнопки поиска"/></button>
-            </div>
+            </form>
         </div>
     </nav>
     <div class="divider"></div>

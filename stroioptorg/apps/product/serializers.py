@@ -2,6 +2,7 @@ from django.core.validators import MinValueValidator
 from rest_framework import serializers
 
 from apps.product.models import CartProduct, Cart, Product, Category, ShopAddress
+from utils.serializers import SuccessResponseSerializer, BasePaginationDataSerializer
 
 
 # Product serializers
@@ -9,10 +10,11 @@ from apps.product.models import CartProduct, Cart, Product, Category, ShopAddres
 class ProductSerializer(serializers.ModelSerializer):
     get_discount_price = serializers.SerializerMethodField()
     cover_url = serializers.SerializerMethodField()
+    wishlist = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'slug', 'sku', 'discount', 'description', 'price', 'get_discount_price', 'cover_url']
+        fields = ['id', 'name', 'slug', 'sku', 'discount', 'description', 'price', 'get_discount_price', 'cover_url', 'wishlist']
 
     def get_discount_price(self, obj):
         return obj.discount_price
@@ -21,6 +23,12 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.cover:
             return obj.cover.image.url
         return None
+
+    def get_wishlist(self, obj):
+        if obj.wishlist.all():
+            return True
+        else:
+            return False
 
 class ProductListSerializer(serializers.Serializer):
     products = ProductSerializer(many=True)
@@ -37,16 +45,17 @@ class ProductListQuerySerializer(serializers.Serializer):
 
 # Cart serializers
 
-class UpdateCartProductSerializer(serializers.Serializer):
-    cart_product_id = serializers.IntegerField(required=True)
+class CartProductUpdateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(required=True, min_value=1)
 
-class AddToCartSerializer(serializers.Serializer):
-    product_id = serializers.IntegerField(required=True)
+class CartProductAddSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(required=True, min_value=1)
 
-class RemoveCartProductSerializer(serializers.Serializer):
-    cart_product_id = serializers.IntegerField(required=True)
+class CartAddSuccessDataSerializer(serializers.Serializer):
+    product_added = serializers.BooleanField(default=True)
+
+class CartProductAddSuccessResponseSerializer(SuccessResponseSerializer):
+    data = CartAddSuccessDataSerializer()
 
 class CartProductSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
@@ -55,7 +64,7 @@ class CartProductSerializer(serializers.ModelSerializer):
         model = CartProduct
         fields = ['id', 'quantity','product', 'subtotal']
 
-class CartSerializer(serializers.ModelSerializer):
+class CartDataSerializer(serializers.ModelSerializer):
     total_amount = serializers.IntegerField()
     products = CartProductSerializer(many=True, read_only=True)
 
@@ -63,6 +72,8 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'user', 'products', 'total_amount']
 
+class CartSuccessResponseSerializer(SuccessResponseSerializer):
+    data = CartDataSerializer()
 
 # Category
 
@@ -70,6 +81,26 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'slug']
+
+class CategoryWithProductsCountSerializer(serializers.ModelSerializer):
+    products_count = serializers.IntegerField()
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug', 'products_count']
+
+class CategoriesWithProductsCountAndAllProductsCountSerializer(serializers.Serializer):
+    categories = CategoryWithProductsCountSerializer(many=True)
+    products_count = serializers.IntegerField()
+
+class CategoryTreeDataSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    url = serializers.CharField()
+    children = serializers.ListField(child=serializers.DictField())
+
+class CategoryTreeSuccessResponseSerializer(SuccessResponseSerializer):
+    data = CategoryTreeDataSerializer(many=True)
 
 # Search
 class SearchQuerySerializer(serializers.Serializer):
@@ -96,3 +127,6 @@ class ShopAddressesByRegionListSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
     name = serializers.CharField(required=True)
     cities = ShopAddressesByCityListSerializer(many=True)
+
+class ShopAddressesSuccessResponseSerializer(SuccessResponseSerializer):
+    data = ShopAddressesByRegionListSerializer(many=True)

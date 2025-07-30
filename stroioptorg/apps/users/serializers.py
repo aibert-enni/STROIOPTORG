@@ -7,19 +7,36 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from apps.users.models import User, Region, Address, City
+from utils.serializers import SuccessResponseSerializer
 from utils.validators import firstname_validator, lastname_validator, phone_number_validator
 
 
-class UserFirstnameSerializer(serializers.Serializer):
+class UserFirstnameDataSerializer(serializers.Serializer):
     firstname = serializers.CharField(max_length=255)
 
-class ProfileSerializer(serializers.ModelSerializer):
+class UserFirstnameSuccessResponseSerializer(SuccessResponseSerializer):
+    data = UserFirstnameDataSerializer()
+
+class ProfileDataSerializer(serializers.ModelSerializer):
+    region = serializers.SerializerMethodField()
+
+    def get_region(self, obj):
+        return obj.region.name if obj.region else None
 
     class Meta:
         model = User
         fields = ['email', 'phone_number', 'region', 'firstname', 'lastname']
 
-class AddressSerializer(serializers.ModelSerializer):
+class ProfileSuccessResponseSerializer(SuccessResponseSerializer):
+    data = ProfileDataSerializer()
+
+class ProfileCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['email', 'phone_number', 'region', 'firstname', 'lastname']
+
+class AddressDataSerializer(serializers.ModelSerializer):
     full_address = serializers.SerializerMethodField()
     phone_number = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
@@ -44,25 +61,34 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         exclude = ['user', 'created_at', 'updated_at']
 
+class AddressSuccessResponseSerializer(SuccessResponseSerializer):
+    data = AddressDataSerializer()
+
 class CreateAddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Address
-        exclude = ['user', 'created_at', 'updated_at']
+        exclude = ['user', 'created_at', 'updated_at', 'id']
 
     def create(self, validated_data):
         user = self.context.get('user')
         return Address.objects.create(user=user, **validated_data)
 
-class RegionSerializer(serializers.ModelSerializer):
+class RegionDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
         fields = ['id','name']
 
-class CitySerializer(serializers.ModelSerializer):
+class RegionSuccessResponseSerializer(SuccessResponseSerializer):
+    data = RegionDataSerializer(many=True)
+
+class CityDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = ['id','name', 'region_id']
+
+class CitySuccessResponseSerializer(SuccessResponseSerializer):
+    data = CityDataSerializer(many=True)
 
 class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField(write_only=True)
@@ -141,3 +167,4 @@ class CustomRegisterSerializer(RegisterSerializer):
         self.custom_signup(request, user)
         setup_user_email(request, user, [])
         return user
+

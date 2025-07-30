@@ -68,14 +68,14 @@
                         if (!response.ok) {
                             const errorData = await response.json()
                             console.log(errorData)
-                            if (errorData.status_code === 404) {
+                            if (response.status === 404) {
                                 this.loading = false;
                             }
                             return;
                         }
 
                         const data = await response.json()
-                        this.address = data
+                        this.address = data.data
                         this.loading = false
                         console.log(data)
                     } catch (error) {

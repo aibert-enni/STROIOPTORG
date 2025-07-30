@@ -121,11 +121,11 @@
 
                     console.log(data)
 
-                    this.email = data.email
-                    this.firstname = data.firstname
-                    this.lastname = data.lastname
-                    this.phone_number = data.phone_number
-                    this.region_id = data.region
+                    this.email = data.data.email
+                    this.firstname = data.data.firstname
+                    this.lastname = data.data.lastname
+                    this.phone_number = data.data.phone_number
+                    this.region_id = data.data.region
 
                     this.profile_data = data;
                 },
@@ -139,7 +139,7 @@
 
                     console.log(data)
 
-                    this.regions = data
+                    this.regions = data.data
                 }
             }
         }

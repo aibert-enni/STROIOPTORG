@@ -9,7 +9,7 @@ app_name = 'order'
 urlpatterns = [
     # get
     path('order/<int:pk>/', OrderGetAPIView.as_view(), name='order'),
-    path('orders/me/', OrderListAPIView.as_view(), name='orders-me'),
+    path('order/list/me/', OrderListAPIView.as_view(), name='orders-me'),
 
     # post
     path('order/create/', OrderCreateAPIView.as_view(), name='order-create'),

@@ -8,6 +8,8 @@ from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.utils import jwt_encode
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -49,6 +51,21 @@ class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Gran
 
 
 class GoogleLoginCallback(APIView):
+
+    @extend_schema(
+        operation_id='google_login_callback',
+        summary='Колбэк для гугл авторизации',
+        description='Колбэк для гугл авторизации',
+        parameters=[
+            OpenApiParameter(
+                name='code',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Google OAuth2 code'
+            ),
+        ]
+    )
     def get(self, request, *args, **kwargs):
 
         code = request.GET.get("code")
@@ -76,7 +93,7 @@ class GoogleLoginCallback(APIView):
         if not access_token or not refresh_token:
             return Response({"detail": "Missing tokens"}, status=status.HTTP_400_BAD_REQUEST)
 
-        response = HttpResponseRedirect("/")
+        response = HttpResponseRedirect(settings.FRONTEND_URL + settings.GOOGLE_AUTH_REDIRECT_URL)
 
         # Ставим куки
         set_jwt_cookies(response, access_token, refresh_token)

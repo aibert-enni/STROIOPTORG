@@ -2,71 +2,39 @@
 {% load static %}
 
 {% block content %}
-    <div class="mt-[9px] mb-[110px]" x-data="searchController">
+    <div class="mt-[9px] mb-[110px]" x-data="wishlistController">
         <div id="catalog-header" class="flex gap-[18px] items-center mb-[40px]">
-            <template x-if="data">
-                <h1 class="font-bold text-[30px] text-[#2C333D]"
-                    x-text="`По запросу «${query}» найдено ${data.count} товаров`"></h1>
-            </template>
+            <h1 class="font-bold text-[30px] text-[#2C333D]">
+                Избранные товары
+            </h1>
         </div>
-        <div class="flex gap-[20px]">
-            <div class="flex flex-col gap-10">
-                <div class="flex flex-col gap-4">
-                    <h4 class="h4">Категория</h4>
-                    <template x-if="data">
-                        <template x-for="category in data.categories">
-                            <div class="flex justify-between">
-                                <a :href="`/catalog/${category.slug}`" x-text="category.name"></a>
-                                <p class="border rounded-3xl h-fit text-[#686868] font-medium text-[11px] py-1.5 px-2"
-                                   x-text="category.products_count"></p>
-                            </div>
-                        </template>
-                    </template>
+        <div class="grid grid-cols-[minmax(250px,_20vw)_1fr] gap-[20px]">
+            <div class="flex flex-col shadow-md rounded-lg h-fit px-6">
+                <div class="text-[#186FD4] font-bold py-5 uppercase flex justify-between items-center">
+                    <p class="text-[13px]">Все категории</p>
+                    <p class="border rounded-3xl h-fit font-medium text-[11px] py-1.5 px-2"
+                       x-text="data ? data.categories.products_count : 0"></p>
                 </div>
-                <div class="flex flex-col gap-[40px]">
-                    <div class="flex flex-col gap-[18px]">
-                        <p class="filter-title">Цена, ₽</p>
-                        <div class="flex gap-[18px]">
-                            <div class="flex border border-[#DFE0E2] rounded px-[15px] py-[13px] gap-[5px]">
-                                <p class="text-[#A7AAAE]">от</p>
-                                <input x-model="price_from" id="price-from-input" class="focus:outline-0 max-w-[60px]"
-                                       type="number">
-                            </div>
-                            <div class="flex border border-[#DFE0E2] rounded px-[15px] py-[13px] gap-[5px]">
-                                <p class="text-[#A7AAAE]">до</p>
-                                <input x-model="price_to" id="price-to-input" class="focus:outline-0 max-w-[60px]"
-                                       type="number">
-                            </div>
+                <template x-if="data">
+                    <template x-for="category in data.categories.categories">
+                        <div class="flex justify-between items-center border-t py-5 font-medium uppercase hover:text-[#186FD4]">
+                            <a class="text-[13px]" :href="`/catalog/${category.slug}`" x-text="category.name"></a>
+                            <p class="border rounded-3xl h-fit text-[#686868] text-[11px] py-1.5 px-2"
+                               x-text="category.products_count"></p>
                         </div>
-                    </div>
-                    <button @click="fetchProducts()" id="filters-request-btn"
-                            class="bg-primary text-white text-[13px] font-bold rounded py-[15px] uppercase">Применить
-                        фильтры
-                    </button>
-                </div>
+                    </template>
+                </template>
+                <button @click="move_products_to_cart" id="filters-request-btn"
+                        class="bg-primary text-white text-[13px] font-bold rounded py-[15px] mt-4 uppercase">
+                    Добавить все в корзину
+                </button>
+                <button @click="clear_wishlist" id="filters-request-btn"
+                        class="bg-[#F6F8FB] text-[#117FE3] text-[13px] font-medium rounded py-[15px] mt-4 mb-6">
+                    Очистить список
+                </button>
             </div>
-            <div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2.5">
-                        <label for="sort">Сортировка:</label>
-                        <select id="sort" class="w-full border rounded-lg py-2 px-2" x-model="sort">
-                            <option selected value="" id="order-btn">
-                                <span id="order-text"></span>
-                                <img src="{% static 'images/dropdown-arrow.svg' %}"
-                                     alt="Иконка для сортировки каталога">
-                            </option>
-
-                            <option value="price">
-                                По возрастанию цены
-                            </option>
-                            <option value="-price">
-                                По убыванию цены
-                            </option>
-                            <option value="-created_at">
-                                По новинкам
-                            </option>
-                        </select>
-                    </div>
+            <div class="flex flex-col gap-10">
+                <div>
                     <div class="flex items-center gap-2.5">
                         <p>Показать по:</p>
                         <div class="flex items-center gap-2.5">
@@ -125,10 +93,19 @@
                                     ><img
                                             src="{% static 'images/white-cart.svg' %}" alt="Иконка корзины"> Купить</a>
                                     <div class="flex items-center gap-[9px] h-full">
-                                        <button style="border-color: #F3F4F5;"
-                                                class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
-                                                class="h-[14px] w-[17px]" src="{% static 'images/heart-icon.svg' %}"
-                                                alt="Иконка для добавления в избранные"></button>
+                                        <button @click="product.wishlist ? removeFromWishlist(product.id, $el) : addToWishlist(product.id, $el)"
+                                                style="border-color: #F3F4F5;"
+                                                class="rounded h-full border px-[11px] border-[#F3F4F5]">
+                                            <svg
+                                                    :style="product.wishlist ? 'color: #186FD4; fill: #186FD4;' : ''"
+                                                    width="17"
+                                                    height="14" viewBox="0 0 26 23" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M13 6.5C13 6.5 14.4034 1.5 18.8475 1.5C22.3092 1.5 24.5 4.3666 24.5 7.7626C24.5 12.4594 19.9359 15.5694 13 21.5C6.06418 15.5694 1.5 12.4594 1.5 7.7626C1.5 4.3666 3.69085 1.5 7.15254 1.5C11.5966 1.5 13 6.5 13 6.5Z"
+                                                      stroke="currentColor" stroke-width="1.6" stroke-miterlimit="10"
+                                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </button>
                                         <button style="border-color: #F3F4F5;"
                                                 class="rounded h-full border px-[11px] border-[#F3F4F5]"><img
                                                 class="h-[18px] w-[14px]" src="{% static 'images/chart-icon.svg' %}"
@@ -141,8 +118,9 @@
                 </div>
                 <div class="flex gap-2.5">
                     <div class="flex gap-2.5 w-full justify-center">
-                        <button @click="data.previous ? fetchProducts(data.current_page - 1) : ''" id="pagination-prev-btn"
-                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                        <button @click="data.previous ? fetchProducts(data.current_page - 1) : ''"
+                                id="pagination-prev-btn"
+                                class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
                             Назад
                         </button>
                         <template x-for="pagination in pagination_range">
@@ -153,7 +131,7 @@
                             </button>
                         </template>
                         <button @click="data.next ? fetchProducts(data.current_page + 1) : ''" id="pagination-next-btn"
-                             class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
+                                class="border hover:text-white hover:bg-black py-[20px] px-[24px] rounded border-[#DFDFDF] cursor-pointer">
                             Вперед
                         </button>
                     </div>
@@ -165,35 +143,43 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'js/wishlist.js' %}"></script>
     <script>
-
-        function searchController() {
+        function wishlistController() {
             return {
-                sort: '-price',
-                price_from: '',
-                price_to: '',
                 paginate: 9,
                 products: [],
-                query: '',
-                fetchUrl: new URL('/api/v1/search/', window.location.origin),
+                fetchUrl: new URL('/api/v1/wishlist/list/me', window.location.origin),
                 data: null,
 
                 async init() {
-                    this.initParams()
                     await this.fetchProducts();
-                    await this.$watch('sort', value => {
-                        this.fetchProducts();
-                    })
                 },
 
-                initParams() {
-                    const params = new URLSearchParams(window.location.search);
-                    const query = params.get('search');
-                    this.query = query
-                    this.fetchUrl.searchParams.set('search', query);
+                async move_products_to_cart() {
+                    const response = await api('/api/v1/wishlist/move_to_cart/me/', {
+                        method: 'POST',
+                    })
 
-                    const search_input = document.querySelector('#search-input');
-                    search_input.value = query;
+                    const data = await response.json()
+
+                    console.log(data)
+
+                    if (data.success) {
+                        location.reload();
+                    }
+                },
+
+                async clear_wishlist() {
+                    const response = await api('/api/v1/wishlist/clear/me/', {
+                        method: 'POST',
+                    })
+                    const data = await response.json()
+
+                    console.log(data)
+                    if (data.success) {
+                        location.reload();
+                    }
                 },
 
                 async setPagination(paginate) {
@@ -202,33 +188,14 @@
                     await this.fetchProducts()
                 },
 
-                async fetchProducts(page=null) {
-
-                    if (this.price_from) {
-                        this.fetchUrl.searchParams.set('price_from', this.price_from);
-                    } else {
-                        this.fetchUrl.searchParams.delete('price_from');
-                    }
-
-                    if (this.price_to) {
-                        this.fetchUrl.searchParams.set('price_to', this.price_to);
-                    } else {
-                        this.fetchUrl.searchParams.delete('price_to');
-                    }
-
-                    if (this.sort) {
-                        this.fetchUrl.searchParams.set('order', this.sort);
-                    } else {
-                        this.fetchUrl.searchParams.delete('order');
-                    }
-
+                async fetchProducts(page = null) {
                     const url = this.fetchUrl;
 
                     if (page) {
                         url.searchParams.set('page', page);
                     }
 
-                    const response = await fetch(this.fetchUrl, {
+                    const response = await api(this.fetchUrl.toString(), {
                         'method': 'GET',
                     })
 
@@ -238,16 +205,6 @@
 
                     this.data = data.data;
                 },
-
-                async getOrdersByPage(page) {
-                    if (this.data.current_page == page || page == '...') {
-                        return
-                    }
-
-                    await this.fetchOrdersData({page: page})
-                },
-
-
 
                 get pagination_range() {
                     if (!this.data) return [];

@@ -7,10 +7,16 @@ class WishlistAddSerializer(serializers.Serializer):
 class WishlistToggleSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
 
-class WishlistToggleResponseSerializer(serializers.Serializer):
+class WishlistToggleDataSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=['added', 'removed'])
     product_id = serializers.IntegerField()
 
-class WishlistCheckProductResponseSerializer(serializers.Serializer):
-    status = serializers.BooleanField()
+class WishlistToggleSuccessResponseSerializer(serializers.Serializer):
+    data = WishlistToggleDataSerializer()
+
+class WishlistCheckProductDataSerializer(serializers.Serializer):
+    is_in_wishlist = serializers.BooleanField()
     product_id = serializers.IntegerField()
+
+class WishlistCheckProductSuccessResponseSerializer(serializers.Serializer):
+    data = WishlistCheckProductDataSerializer()

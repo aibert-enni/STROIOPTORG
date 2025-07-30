@@ -166,12 +166,12 @@
 
                     const data = await response.json()
 
-                    this.firstname = data.firstname
+                    this.firstname = data.data.firstname
                 },
 
                 // orders
 
-                async fetchOrdersData({url = '/api/v1/orders/me', page = null} = {}) {
+                async fetchOrdersData({url = '/api/v1/order/list/me/', page = null} = {}) {
                     if (page) {
                         url += `/?page=${page}`
                     }
@@ -182,11 +182,11 @@
 
                     const data = await response.json()
 
-                    for (const order of data.results) {
+                    for (const order of data.data.results) {
                         order['color'] = order_status_colors[order['status']]
                     }
 
-                    this.orders_data = data
+                    this.orders_data = data.data
 
                     console.log(data)
                 },
@@ -202,7 +202,7 @@
 
                     console.log(data)
 
-                    if (data.success) {
+                    if (response.ok) {
                         window.location.href = '/'
                     }
                 }

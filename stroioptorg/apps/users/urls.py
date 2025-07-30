@@ -2,7 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from apps.users.views import RegisterView, LoginView
-from apps.users.views.email import PasswordResetTemplateView, PasswordResetConfirmView
+from apps.users.views.email import PasswordResetTemplateView, PasswordResetConfirmView, RegisterConfirmView
 from apps.users.views.account import AccountMyAccountTemplateView, AccountOrdersTemplateView, AccountOrderTemplateView, \
     AccountProfileEditTemplateView, AccountDeliveryAddressTemplateView, AccountDeliveryAddressEditTemplateView, \
     AccountDeliveryAddressCreateTemplateView, AccountPasswordChangeTemplateView
@@ -13,6 +13,7 @@ urlpatterns = [
     # auth
     path('auth/register', RegisterView.as_view(), name='register'),
     path('auth/login', LoginView.as_view(), name='login'),
+    path('auth/register/confirm/<int:pk>', RegisterConfirmView.as_view(), name='password_reset_confirm'),
 
     # account
     path('account/', AccountMyAccountTemplateView.as_view(), name='account'),

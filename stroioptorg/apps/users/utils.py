@@ -65,8 +65,12 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         password_reset_url = context.get("password_reset_url", None)
 
         if password_reset_url:
-            reset_path = reverse('users:password_reset_confirm', kwargs={ "uidb64": context["uid"], "token": context["token"]})
-            context["password_reset_url"] = settings.FRONTEND_URL + reset_path
+            context["password_reset_url"] = settings.FRONTEND_URL + settings.PASSWORD_RESET_CONFIRM_URL + context["uid"] + "/" + context["token"]
+
+        activate_url = context.get("activate_url", None)
+
+        if activate_url:
+            context["activate_url"] = settings.FRONTEND_URL + settings.REGISTER_CONFIRM_REDIRECT_URL + context.get("key")
 
         ctx.update(context)
         msg = self.render_mail(template_prefix, email, ctx)

@@ -250,7 +250,7 @@
                         credentials: 'include'
                     });
                     const data = await response.json();
-                    this.regions = data;
+                    this.regions = data.data;
                 },
 
                 // Загрузка корзины
@@ -262,6 +262,7 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            data = data.data
                             this.products = data.products;
                             this.products_total = data.total_amount;
                             console.log(data);
@@ -290,7 +291,7 @@
                         credentials: 'include'
                     });
                     const data = await response.json();
-                    this.deliveryCost = data.delivery_cost;
+                    this.deliveryCost = data.data.delivery_cost;
                 },
 
                 // === Отправка заказа ===
@@ -345,8 +346,8 @@
 
                         console.log(data);
 
-                        if (data.checkout_url) {
-                            window.location.href = data.checkout_url
+                        if (data.data.checkout_url) {
+                            window.location.href = data.data.checkout_url
                         }
 
 

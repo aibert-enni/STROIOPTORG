@@ -354,14 +354,12 @@
 
         async function fetchCart(product_id, quantity) {
             try {
-                const response = await fetch('http://localhost:8000/api/v1/cart/add/', {
+                const response = await api('/api/v1/cart/product/' + product_id, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': getCsrfToken(), // Add the CSRF token in headers
                     },
                     body: JSON.stringify({ // Use 'body' instead of 'data'
-                        product_id: product_id,
                         quantity: quantity,
                     }),
                 });

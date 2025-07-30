@@ -8,6 +8,7 @@ from utils.validators import firstname_validator, lastname_validator, phone_numb
 
 class OrderStatus(models.TextChoices):
     COMPLETED = 'completed', 'Выполнен'
+    IN_SHOP = 'in_shop', 'В магазине'
     IN_TRANSIT = 'in_transit', 'В пути'
     PROCESSING = 'processing', 'Обработка'
     CANCELLED = 'cancelled', 'Отменен'

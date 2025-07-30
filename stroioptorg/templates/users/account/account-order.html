@@ -109,12 +109,12 @@
                     })
 
                     const data = await response.json();
-
-                    data.order['color'] = order_status_colors[data.order['status']];
-
                     console.log(data);
 
-                    this.order = data.order;
+                    data.data['color'] = order_status_colors[data.data['status']];
+
+
+                    this.order = data.data;
                 }
             }
         }
