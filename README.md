@@ -53,7 +53,8 @@
 <img width="960" height="540" alt="Снимок7" src="https://github.com/user-attachments/assets/b2eefcdb-6e8a-4d97-89c1-6c54bb7bf775" />
 <img width="960" height="540" alt="Снимок10" src="https://github.com/user-attachments/assets/a2ca6dfd-7706-4eb6-ba8f-c05dd0e6fd76" />
 <img width="960" height="540" alt="Снимок9" src="https://github.com/user-attachments/assets/5b4bfa4a-062f-474b-8caa-5e3e8e391c50" />
-<img width="960" height="540" alt="Снимок11" src="https://github.com/user-attachments/assets/b5e9c4df-5743-46f6-8133-2236813f9e5c" />
+<img width="960" height="540" alt="Снимок100" src="https://github.com/user-attachments/assets/6e0ea9c5-4e0e-44b6-ade7-82b2d850c5eb" />
+
 ---
 ## Установка
 
