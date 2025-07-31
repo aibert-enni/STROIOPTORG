@@ -7,6 +7,17 @@
 Этот проект представляет собой **систему онлайн-магазина**, включающую функционал создания товаров, показа каталога товаров с фильтрацией по атрибутам, добавления в корзину даже если пользователь не авторизован, оформления заказов, управления товарами, оплатой и возвратами. Приложение также интегрировано с **Stripe** для обработки платежей.
 
 ---
+## Стек технологий
+
+- **Backend**: Django, Django Rest Framework, dj-rest-auth
+- **Database**: SQLite
+- **Frontend**: HTML, CSS, JavaScript, Tailwind
+- **Платёжная система**: Stripe
+- **Асинхронные задачи**: Celery, Redis
+- **Поисковая система**: Elasticsearch
+- **Тестирование**: Pytest/Django Test Framework
+
+---
 Скриншоты:
 <img width="960" height="540" alt="Снимок1" src="https://github.com/user-attachments/assets/c5f6c975-cfb1-4e6f-b61d-5853181680b1" />
 <img width="960" height="540" alt="Снимок2" src="https://github.com/user-attachments/assets/6032b7b0-eb18-4153-afc3-990f27711d92" />
@@ -18,17 +29,6 @@
 <img width="960" height="540" alt="Снимок10" src="https://github.com/user-attachments/assets/a2ca6dfd-7706-4eb6-ba8f-c05dd0e6fd76" />
 <img width="960" height="540" alt="Снимок9" src="https://github.com/user-attachments/assets/5b4bfa4a-062f-474b-8caa-5e3e8e391c50" />
 <img width="960" height="540" alt="Снимок11" src="https://github.com/user-attachments/assets/b5e9c4df-5743-46f6-8133-2236813f9e5c" />
-
----
-## Стек технологий
-
-- **Backend**: Django, Django Rest Framework, dj-rest-auth
-- **Database**: SQLite
-- **Frontend**: HTML, CSS, JavaScript, Tailwind
-- **Платёжная система**: Stripe
-- **Асинхронные задачи**: Celery, Redis
-- **Поисковая система**: Elasticsearch
-- **Тестирование**: Pytest/Django Test Framework
 
 ---
 ## Установка
