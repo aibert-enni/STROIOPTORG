@@ -30,6 +30,9 @@ class ProductSerializer(serializers.ModelSerializer):
         else:
             return False
 
+class ProductGetSuccessResponseSerializer(SuccessResponseSerializer):
+    data = ProductSerializer()
+
 class ProductListSerializer(serializers.Serializer):
     products = ProductSerializer(many=True)
 

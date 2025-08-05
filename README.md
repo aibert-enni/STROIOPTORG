@@ -24,7 +24,19 @@
 ```shell
 git clone https://github.com/aibert-enni/stroiopstorg.git cd stroioptorg
 ```
-### 2. Установка зависимостей
+
+### 2. Поднятие через докер
+Поднимаем docker compose:
+```shell
+docker compose up
+```
+
+Включаем слушатель stripe:
+```shell
+stripe listen --forward-to localhost:8000/api/v1/stripe/webhook/
+```
+
+### 2. Вручную
 
 Убедитесь, что у вас установлен Python 3.10. Рекомендуется использовать виртуальное окружение.
 
@@ -50,7 +62,7 @@ python manage.py migrate
 ```
 
 ### 4. Запуск сервера
-Поднимаем докер:
+Поднимаем докер для redis и elasticsearch(отключите web):
 ```shell
 docker compose up
 ```

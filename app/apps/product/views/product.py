@@ -1,14 +1,41 @@
 from django.views.generic import DetailView, TemplateView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework.generics import ListAPIView
+from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.product.models import Product, ProductAttribute
-from apps.product.pagination import ProductListPagination
-from apps.product.serializers import ProductSerializer, CategorySerializer, SearchQuerySerializer, \
-    CategoryWithProductsCountSerializer
+from apps.product.serializers import ProductSerializer, SearchQuerySerializer, \
+    CategoryWithProductsCountSerializer, ProductGetSuccessResponseSerializer
 from apps.product.services import ProductService
 from utils.pagination import BasePagination
 
+class ProductAPIView(APIView):
+
+    @extend_schema(
+        operation_id="get product",
+        tags=["product"],
+        summary="Получить продукт по id",
+        description="Получить продукт по id",
+        responses={
+            200: ProductGetSuccessResponseSerializer
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('pk')
+
+        try:
+            product = get_object_or_404(Product, pk=id)
+            serializer = ProductSerializer(product)
+        except Exception as e:
+            raise NotFound({"error": "Продукт не найден"})
+
+        return Response({
+            "status": "success",
+            "message": "Продукт получен",
+            "data": serializer.data
+        })
 
 class ProductDetailView(DetailView):
     model = Product
